@@ -1,6 +1,7 @@
 #!/bin/bash
 # Start the optimized production server on 127.0.0.1:8080.
-# Configuration validated in Fase 8 (F1): see RESULTS.md / OPTIMIZATION.md.
+# Configuration validated in Fase 8 (F1) and refined after the BIOS ReBAR test (F1r):
+# see RESULTS.md / OPTIMIZATION.md.
 set -euo pipefail
 LAB="$(cd "$(dirname "$0")/.." && pwd)"
 DK="$LAB/bin/dk"
@@ -19,7 +20,8 @@ PORT=8080
   --ctx-size 200000 --n-predict -1 --n-gpu-layers auto \
   --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja \
   --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe \
-  -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+  --spec-draft-n-ubatch 512 \
+  -ctk q8_0 -ctv q8_0 -b 3072 -ub 3072 --load-mode none
 
 for i in $(seq 1 600); do
   if curl -sf -m 2 "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then

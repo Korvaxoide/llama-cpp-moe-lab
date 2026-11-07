@@ -63,7 +63,7 @@
         "ExecIDs": null,
         "HostConfig": {
             "Binds": [
-                "/home/luca/AI/llama-models:/models:ro"
+                "$HOME/AI/llama-models:/models:ro"
             ],
             "ContainerIDFile": "",
             "LogConfig": {
@@ -185,7 +185,7 @@
         "Mounts": [
             {
                 "Type": "bind",
-                "Source": "/home/luca/AI/llama-models",
+                "Source": "$HOME/AI/llama-models",
                 "Destination": "/models",
                 "Mode": "ro",
                 "RW": false,

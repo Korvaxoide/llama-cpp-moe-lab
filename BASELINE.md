@@ -12,7 +12,7 @@ Fonti: `baseline/original/qwen36-35b.inspect.json`, `baseline/original/image.ins
 | Nome container | `qwen36-35b` (preservato, mai cancellato) |
 | Immagine | `ghcr.io/ggml-org/llama.cpp@sha256:0283744a35a6e7698b4f7a2d63360233dc769ece51e84bdba7aa187a33978276` |
 | Versione / commit | b11977 / `7ac5727d6037ec99c31a28c6520f45de154199d9` |
-| Mount | `/home/luca/AI/llama-models` → `/models` (ro) |
+| Mount | `$HOME/AI/llama-models` → `/models` (ro) |
 | Porta | `127.0.0.1:8080` → `8080/tcp` (solo loopback) |
 | Restart policy | `no` |
 | GPU | `--gpus all` (DeviceRequests capabilities `gpu`) |

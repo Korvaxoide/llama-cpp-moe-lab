@@ -17,7 +17,7 @@ Rilevato il 2026-11-05 con `lscpu`, `nvidia-smi -q`, `/sys/class/dmi`, `/sys/bus
 |---|---|
 | Scheda madre | MSI B450 GAMING PLUS MAX (MS-7B86), BIOS H.P1 (2025-09-18) |
 | Slot GPU | PCIe **Gen3 x16** (8.0 GT/s). La GPU supporta Gen4 ("Device Max: 4") ma l'host è limitato a Gen3 ("Host Max: 3") dal chipset B450 |
-| Resizable BAR | disattivato (BAR1 = 256 MiB) |
+| Resizable BAR | **attivo dal 2026-11-07** (opzione BIOS `Re-size BAR Support`): BAR1 = **16384 MiB** (prima 256 MiB). Nessun effetto sulla banda, che resta Gen3 x16; misurato **neutro/negativo** per llama.cpp (PP −2.3…−6.5 %, TG uguale o peggiore: `RESULTS.md` §1.3) |
 | Banda H2D misurata indirettamente | **~11.8 GiB/s ≈ 12.7 GB/s** (limite pratico Gen3 x16), calcolata da 16 ubatch × 13.62 GiB / 18.4 s nel prompt processing baseline (`results/bench_E00b_baseline.jsonl`, 8K, `prompt_ms` 18 398.6) |
 
 **Limite hardware non superabile via software**: ogni byte di esperti MoE che risiede in RAM e serve alla GPU passa su un bus da ~12.7 GB/s (Gen3 x16). La baseline era satura su questo bus; vedi `OPTIMIZATION.md` §4.1.
@@ -34,12 +34,18 @@ Rilevato il 2026-11-05 con `lscpu`, `nvidia-smi -q`, `/sys/class/dmi`, `/sys/bus
 | Voce | Valore |
 |---|---|
 | Modello | NVIDIA GeForce RTX 3080 (Ampere, GA102, compute capability 8.6) |
-| VRAM | 10240 MiB (9926 MiB visti da CUDA, ~9070 MiB liberi con il desktop attivo) |
+| VRAM | 10240 MiB; con il desktop attivo CUDA vede 9905–9926 MiB totali e ~9000–9180 MiB liberi all'avvio di llama.cpp (F1: 9179, F1r: 9029, baseline pre-ReBAR: 9035, con ReBAR: 8724) |
 | Uso desktop | ~0.9 GB occupati da KWin/Plasma/Xwayland/Steam |
 | Clock max | SM 2115 MHz, memoria 9501 MHz |
 | Power limit | 370 W (default = max) |
 | Driver | 615.78.08, CUDA UMD 13.4 |
 | Persistence mode | Disabled |
+| BAR1 / ReBAR | 16384 MiB (ReBAR attivo). Riserva driver `memory.reserved` 335 MiB; la VRAM visibile cala di ~21 MiB (9926 → 9905) |
+
+Nota: con ReBAR attivo la VRAM libera all'avvio è inferiore di ~300–450 MiB, in parte per
+la riserva del driver (`memory.reserved` 335 MiB), in parte per la variabilità del desktop.
+Questo è il motivo per cui la vecchia configurazione F1 (buffer compute MTP 942 MiB)
+non entra più e la produzione usa `--spec-draft-n-ubatch 512` (buffer 235.52 MiB).
 
 ## Software
 | Voce | Valore |

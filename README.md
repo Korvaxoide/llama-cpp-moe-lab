@@ -7,13 +7,13 @@ Laboratorio di ottimizzazione di **llama.cpp** su una singola workstation
 Risultato: la configurazione di produzione (`qwen36-35b-opt`) rispetto alla
 configurazione originale misurata:
 
-| Metrica | Baseline | Produzione | Δ |
+| Metrica | Baseline | Produzione (F1r) | Δ |
 |---|---|---|---|
-| Prompt processing 8K / 192K | 445 / 386 t/s | **1473 / 1031 t/s** | **+231 % / +167 %** |
-| Generazione 8K / 32K / 192K | 31.4 / 28.5 / 28.9 t/s | **46.9 / 49.7 / 35.0 t/s** | **+49 % / +74 % / +21 %** |
-| TTFT 32K / 128K | 73.9 / 328.6 s | **23.0 / 113.3 s** | **−69 % / −66 %** |
-| Lavoro agentico | 6.7 task/min | **8.77 task/min** | **+31 %** |
-| Qualità (coding / needle) | 10/10 / 5/5 | **10/10 / 5/5** | invariata |
+| Prompt processing 8K / 192K | 445 / 386 t/s | **1745 / 1209 t/s** | **+292 % / +213 %** |
+| Generazione 8K / 32K / 192K | 31.4 / 28.5 / 28.9 t/s | **50.1 / 50.1 / 32.7 t/s** | **+60 % / +75 % / +13 %** |
+| TTFT 32K / 128K | 73.9 / 328.6 s | **18.4 / 93.9 s** | **−75 % / −71 %** |
+| Lavoro agentico | 6.7 task/min | **8.82 task/min** | **+32 %** |
+| Qualità (coding 10 prove) | 10/10 | **10/10** | invariata |
 
 Dettagli e fonti: [`RESULTS.md`](RESULTS.md), [`OPTIMIZATION.md`](OPTIMIZATION.md).
 
@@ -76,12 +76,13 @@ I comandi vanno eseguiti dalla radice del laboratorio. Il server sperimentale
 ascolta su `127.0.0.1:8081`, così non tocca la produzione su `8080`.
 
 ```bash
-# 1) avvia un server isolato con la configurazione finale (F1)
+# 1) avvia un server isolato con la configurazione finale (F1r)
 scripts/run_server.sh llopt-exp -- \
   --ctx-size 200000 --n-predict -1 --n-gpu-layers auto \
   --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja \
   --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe \
-  -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+  --spec-draft-n-ubatch 512 \
+  -ctk q8_0 -ctv q8_0 -b 3072 -ub 3072 --load-mode none
 
 # 2) esegui il benchmark (3 rep fino a 32K, 2 rep oltre)
 python3 bench/bench.py --tag MIO_RUN --depths 8192,32768,131072,196608 --reps 3 --long-reps 2
@@ -127,3 +128,17 @@ Nessun numero in questo repository è inventato. Ogni tabella deriva da
 `results/*.jsonl` o da righe di `logs/exp/*`; le mediane sono generate con
 `python3 bench/summarize.py`, che riscrive anche `results/summary.csv`. Dove un
 valore è un calcolo derivato (es. banda PCIe) la formula è mostrata accanto.
+
+## Licenza e disclaimer
+
+Codice e documentazione: [MIT](LICENSE).
+
+I risultati sono specifici di questo hardware e di questo runtime (RTX 3080 10 GB,
+Ryzen 7 3700X, PCIe Gen3 x16, llama.cpp b11977, `Qwen3.6-35B-A3B-UD-Q3_K_M.gguf`):
+servono come metodo e come confronto, non come garanzia su altre macchine.
+
+I pesi del modello **non** sono distribuiti in questa repo: il GGUF resta fuori dal
+versionamento e viene montato in sola lettura. I path personali sono stati sostituiti
+con `$HOME` in vista della pubblicazione; i log sono riportati come prodotti dagli
+strumenti, con le sole sostituzioni dei path.
+

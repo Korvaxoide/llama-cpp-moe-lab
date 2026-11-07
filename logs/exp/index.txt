@@ -570,3 +570,67 @@
    0.12.788.070 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
    0.16.991.547 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
    0.16.991.551 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+== F1_rebar :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+   FAILED TO START
+== E00b_rebar :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe
+   load_s=4
+   0.02.062.987 I load_tensors:        CUDA0 model buffer size =  1961.70 MiB
+   0.02.279.297 I llama_kv_cache:      CUDA0 KV buffer size =  3910.00 MiB
+   0.02.279.784 I llama_memory_recurrent:      CUDA0 RS buffer size =   188.44 MiB
+   0.02.286.557 I impl:      CUDA0 MoE cache size =  1019.49 MiB for 13942.00 MiB of host experts
+   0.02.389.413 I sched_reserve:      CUDA0 compute buffer size =   565.50 MiB
+   0.02.389.416 I sched_reserve:  CUDA_Host compute buffer size =   211.52 MiB
+   0.02.556.229 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.02.648.373 I sched_reserve:      CUDA0 compute buffer size =   235.52 MiB
+   0.02.648.378 I sched_reserve:  CUDA_Host compute buffer size =   203.52 MiB
+   0.02.762.043 I sched_reserve:      CUDA0 compute buffer size =   235.52 MiB
+   0.02.762.046 I sched_reserve:  CUDA_Host compute buffer size =   203.52 MiB
+   0.06.478.000 I sched_reserve:      CUDA0 compute buffer size =   565.50 MiB
+   0.06.478.003 I sched_reserve:  CUDA_Host compute buffer size =   211.52 MiB
+   23.06.718.363 I llama_moe_cache: ubatch <= 8: hits = 85871, misses = 620159, hit rate = 12.16%, uploaded = 811774.82 MiB
+   23.06.718.366 I llama_moe_cache: large batches: 2094846 experts copied from the cache, 924970.77 MiB
+== F1r_dub128 :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe --spec-draft-n-ubatch 128 -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+   load_s=15
+   0.06.645.871 I load_tensors:        CUDA0 model buffer size =  3545.70 MiB
+   0.06.645.872 I load_tensors:    CUDA_Host model buffer size = 12755.85 MiB
+   0.12.719.999 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.720.550 I llama_memory_recurrent:      CUDA0 RS buffer size =   251.25 MiB
+   0.13.075.868 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.13.075.871 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.13.251.805 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.274.135 I sched_reserve:      CUDA0 compute buffer size =    58.88 MiB
+   0.13.274.138 I sched_reserve:  CUDA_Host compute buffer size =    50.88 MiB
+   0.13.309.406 I sched_reserve:      CUDA0 compute buffer size =    58.88 MiB
+   0.13.309.409 I sched_reserve:  CUDA_Host compute buffer size =    50.88 MiB
+   0.17.455.730 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.17.455.734 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+== F1r_ub3072 :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe --spec-draft-n-ubatch 512 -ctk q8_0 -ctv q8_0 -b 3072 -ub 3072 --load-mode none
+   load_s=15
+   0.06.458.317 I load_tensors:        CUDA0 model buffer size =  3545.70 MiB
+   0.06.458.319 I load_tensors:    CUDA_Host model buffer size = 12755.85 MiB
+   0.12.271.678 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.272.216 I llama_memory_recurrent:      CUDA0 RS buffer size =   251.25 MiB
+   0.12.830.922 I sched_reserve:      CUDA0 compute buffer size =  1973.02 MiB
+   0.12.830.926 I sched_reserve:  CUDA_Host compute buffer size =  1269.41 MiB
+   0.12.958.277 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.044.098 I sched_reserve:      CUDA0 compute buffer size =   235.52 MiB
+   0.13.044.101 I sched_reserve:  CUDA_Host compute buffer size =   203.52 MiB
+   0.13.159.328 I sched_reserve:      CUDA0 compute buffer size =   235.52 MiB
+   0.13.159.332 I sched_reserve:  CUDA_Host compute buffer size =   203.52 MiB
+   0.17.709.083 I sched_reserve:      CUDA0 compute buffer size =  1973.02 MiB
+   0.17.709.088 I sched_reserve:  CUDA_Host compute buffer size =  1269.41 MiB
+== F1r_ub3072_long :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe --spec-draft-n-ubatch 512 -ctk q8_0 -ctv q8_0 -b 3072 -ub 3072 --load-mode none
+   load_s=15
+   0.06.251.265 I load_tensors:        CUDA0 model buffer size =  3545.70 MiB
+   0.06.251.267 I load_tensors:    CUDA_Host model buffer size = 12755.85 MiB
+   0.12.607.565 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.608.209 I llama_memory_recurrent:      CUDA0 RS buffer size =   251.25 MiB
+   0.13.180.559 I sched_reserve:      CUDA0 compute buffer size =  1973.02 MiB
+   0.13.180.563 I sched_reserve:  CUDA_Host compute buffer size =  1269.41 MiB
+   0.13.323.828 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.410.448 I sched_reserve:      CUDA0 compute buffer size =   235.52 MiB
+   0.13.410.452 I sched_reserve:  CUDA_Host compute buffer size =   203.52 MiB
+   0.13.522.950 I sched_reserve:      CUDA0 compute buffer size =   235.52 MiB
+   0.13.522.954 I sched_reserve:  CUDA_Host compute buffer size =   203.52 MiB
+   0.18.381.102 I sched_reserve:      CUDA0 compute buffer size =  1973.02 MiB
+   0.18.381.106 I sched_reserve:  CUDA_Host compute buffer size =  1269.41 MiB

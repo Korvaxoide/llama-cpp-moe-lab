@@ -66,12 +66,12 @@ READY after 13s
    load_s=15
 [E42_mc2048] server n_ctx=200192
 Traceback (most recent call last):
-  File "/home/luca/AI/llama-optimizer-lab/bench/bench.py", line 104, in <module>
+  File "$HOME/AI/llama-optimizer-lab/bench/bench.py", line 104, in <module>
     main()
     ~~~~^^
-  File "/home/luca/AI/llama-optimizer-lab/bench/bench.py", line 85, in main
+  File "$HOME/AI/llama-optimizer-lab/bench/bench.py", line 85, in main
     r = post(args.url + "/completion", payload)
-  File "/home/luca/AI/llama-optimizer-lab/bench/bench.py", line 16, in post
+  File "$HOME/AI/llama-optimizer-lab/bench/bench.py", line 16, in post
     with urllib.request.urlopen(req, timeout=timeout) as r:
          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen

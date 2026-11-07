@@ -5,7 +5,7 @@
 > deve provenire da un file in `results/` o `logs/`. Se un passo fallisce, applica la sezione
 > "Se fallisce" del passo; se non c'è, fermati e scrivi il problema in `PROGRESS.md`.
 
-Directory di lavoro: `/home/luca/AI/llama-optimizer-lab` (d'ora in poi `$LAB`). Tutti i comandi partono da lì.
+Directory di lavoro: `$HOME/AI/llama-optimizer-lab` (d'ora in poi `$LAB`). Tutti i comandi partono da lì.
 
 ---
 

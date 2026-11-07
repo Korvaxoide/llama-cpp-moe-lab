@@ -506,6 +506,73 @@ Ogni voce segue il modello della §9 di `PLAN_FOR_AGENT.md`. Decisioni secondo l
 - **Decisione**: **FINALISTA 2 (alternativa conservativa)** — ~5 % più lento in PP ma lascia ~18.7 GB di RAM liberi invece di ~5.5 GB. Non promosso a produzione: F1 è più veloce e la macchina non ha carenza di RAM durante l'uso previsto.
 - **File**: `results/bench_F2_full.jsonl`, `results/agentic_F2_agentic.jsonl`, `results/needle_F2_needle.jsonl`, `results/session_F2_session.jsonl`, `logs/exp/F2_full.log`
 
+### E00b_rebar — 2026-11-07 12:55–13:20
+- **Ipotesi**: il Resizable BAR (BAR1 da 256 MiB a 16384 MiB) riduce le latenze di accesso agli esperti MoE e migliora PP/TG della configurazione originale, che era satura sul bus PCIe.
+- **Modifica (unica)**: ReBAR abilitato nel BIOS (`Re-size BAR Support`), stessa configurazione di `E00b_baseline` (KV f16, ubatch 512, `--cpu-moe`, cache 1024, mmap, MTP n_max 2).
+- **Verifiche**: BAR1 16384 MiB, `memory.reserved` 335 MiB, PCIe resta Gen3 x16; `n_ctx=200192` ✔; nessun errore ✔.
+- **Risultati (mediane, n=3 / n=2)**:
+  | depth | PP E00b | PP rebar | Δ% | TG E00b | TG rebar | Δ% | VRAM max E00b | VRAM max rebar |
+  |---|---|---|---|---|---|---|---|---|
+  | 8192 | 445.25 | 416.47 | −6.5 | 31.41 | 26.91 | −14.3 | 9306 | 9904 |
+  | 32768 | 443.20 | 431.93 | −2.5 | 28.54 | 27.35 | −4.2 | 9294 | 9831 |
+  | 65536 | 424.63 | 415.06 | −2.3 | 28.48 | 25.30 | −11.2 | 9285 | 9401 |
+  | 131072 | 398.85 | 388.70 | −2.5 | 28.15 | 27.73 | −1.5 | 9444 | 9863 |
+- **Decisione**: **NEUTRO/NEGATIVO** — nessun guadagno, PP −2.3…−6.5 %, TG uguale o peggiore, VRAM massima +598 MiB (9904 vs 9306 a 8K). Il ReBAR non alza la banda Gen3 e riduce la VRAM libera all'avvio (≈8724 vs ≈9035 MiB). Non adottato come motivazione; la configurazione F1 originale **non parte più** con ReBAR attivo (`failed to allocate compute pp buffers`).
+- **File**: `results/bench_E00b_rebar.jsonl`, `logs/exp/E00b_rebar.log`, `logs/E00b_rebar.out`
+
+### F1r_dub128 — 2026-11-07 13:22–13:30
+- **Ipotesi**: il buffer compute del contesto MTP (942 MiB con ubatch 2048) scala con `--spec-draft-n-ubatch`; ridurlo libera la VRAM persa con il ReBAR.
+- **Modifica (unica)**: aggiunta `--spec-draft-n-ubatch 128` a F1 (ubatch target invariato 2048).
+- **Verifiche**: `n_ctx=200192` ✔; il buffer compute del draft scende **942.06 → 58.88 MiB** (−883 MiB); il server riparte con ReBAR attivo; nessun errore ✔.
+- **Risultati (mediane, n=3 / n=2)**:
+  | depth | PP F1 | PP dub128 | Δ% | TG F1 | TG dub128 | Δ% | VRAM max F1 | VRAM max dub128 |
+  |---|---|---|---|---|---|---|---|---|
+  | 8192 | 1473.36 | 1455.47 | −1.2 | 46.87 | 46.45 | −0.9 | 9597 | 8841 |
+  | 32768 | 1426.27 | 1409.57 | −1.2 | 49.67 | 48.63 | −2.1 | 9570 | 8939 |
+  | 131072 | 1156.77 | 1136.66 | −1.7 | 43.05 | 42.28 | −1.8 | 9568 | 8841 |
+- **Decisione**: **TENUTO come abilitatore** — costa l'1–2 % ma libera ~630–760 MiB di VRAM osservata e rende la config avviabile con ReBAR. La VRAM liberata viene reinvestita in un ubatch più grande (`F1r_ub3072`).
+- **File**: `results/bench_F1r_dub128.jsonl`, `logs/exp/F1r_dub128.log`, `logs/F1r_dub128.out`
+
+### F1r_ub3072 — 2026-11-07 13:32–13:40
+- **Ipotesi**: con la VRAM liberata da `--spec-draft-n-ubatch 512`, un ubatch più grande riduce i trasferimenti di esperti per prompt e alza il PP.
+- **Modifica (unica)**: `-b 3072 -ub 3072` (era 2048) e `--spec-draft-n-ubatch 512` (era il default = ubatch target).
+- **Verifiche**: `n_ctx=200192` ✔; proiezione fit 8473 MiB vs 9029 liberi ✔; compute target 1973.02 MiB, compute draft 235.52 MiB; nessun errore ✔.
+- **Risultati (mediane, n=3 / n=2)**:
+  | depth | PP F1 | PP ub3072 | Δ% | TG F1 | TG ub3072 | Δ% | TTFT F1 | TTFT ub3072 | VRAM max F1 | VRAM max ub3072 |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | 8192 | 1473.36 | **1744.57** | **+18.4** | 46.87 | 50.13 | +7.0 | 5.56 | 4.70 | 9597 | 9541 |
+  | 32768 | 1426.27 | **1782.44** | **+25.0** | 49.67 | 50.08 | +0.8 | 22.97 | 18.38 | 9570 | 9520 |
+  | 131072 | 1156.77 | **1395.48** | **+20.6** | 43.05 | 42.30 | −1.7 | 113.31 | 93.93 | 9568 | 9520 |
+- **Decisione**: **TENUTO** — PP +18…+25 %, TG invariata, VRAM massima leggermente inferiore. Non si sale a 3584/4096: il margine a 192K scenderebbe sotto i 362 MiB misurati.
+- **File**: `results/bench_F1r_ub3072.jsonl`, `logs/exp/F1r_ub3072.log`, `logs/F1r_ub3072.out`
+
+### F1r_ub3072_long — 2026-11-07 13:44–13:50
+- **Ipotesi**: la nuova configurazione regge il contesto massimo senza OOM e mantiene il guadagno a 192K.
+- **Modifica (unica)**: profondità 196608, GEN 128, 2 rep.
+- **Verifiche**: `n_ctx=200192` ✔; VRAM max **9878 MiB** → margine **362 MiB**; nessun errore/OOM ✔.
+- **Risultati**: PP **1209.18 t/s** (vs 1030.62 di F1, **+17.3 %**), TG 32.69 (vs 34.97, −6.5 %, entro il rumore: acc 0.68 vs 0.74), TTFT 162.6 s (vs 190.77, −14.8 %).
+- **Decisione**: **SUPERATO** — il guadagno PP resta a 192K, la VRAM entra con 362 MiB di margine.
+- **File**: `results/bench_F1r_ub3072_long.jsonl`, `logs/exp/F1r_ub3072_long.log`, `logs/queue_rebar.out`
+
+### F1r_agentic — 2026-11-07 13:50–13:52
+- **Ipotesi**: la nuova configurazione non degrada tool calling e coding.
+- **Modifica (unica)**: `agentic.py --coding-reps 2` sulla config `F1r_ub3072`.
+- **Risultati**: tool_call ok, tool_call_stream ok, multi_turn ok, coding **10/10**, `tasks_per_min = 8.82` (F1: 8.77).
+- **Decisione**: **SUPERATO**.
+- **File**: `results/agentic_F1r_agentic.jsonl`, `logs/exp/F1r_agentic_server.log`
+
+### F1r_session — 2026-11-07 13:52–13:56
+- **Ipotesi**: stabilità su sessione agentica lunga con la nuova configurazione.
+- **Modifica (unica)**: `session.py --target 180000 --chunk 6000`.
+- **Risultati**:
+  | tag | turni | contesto finale | `prompt_n` min–max | TTFT med | PP med | TG med | vuoti/1-token |
+  |---|---|---|---|---|---|---|---|
+  | F1_session | 29 | 177 082 | 6083–6548 | 6.93 s | 969.3 | 37.53 | 7 |
+  | **F1r_session** | 29 | 178 609 | 6082–6548 | **5.66 s** | **1142.1** | 37.30 | **2** |
+- **Verifiche**: nessuna rielaborazione completa del contesto (`prompt_n` stabile), nessun errore/abort nel log.
+- **Decisione**: **SUPERATO** — TTFT −18 %, PP +18 %, TG invariata, meno risposte vuote.
+- **File**: `results/session_F1r_session.jsonl`, `logs/exp/F1r_session_server.log`, `logs/queue_rebar.out`
+
 ---
 
 ## Nota tecnica — correzione di `bench/summarize.py` (2026-11-06)
