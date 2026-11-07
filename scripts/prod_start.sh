@@ -1,6 +1,6 @@
 #!/bin/bash
 # Start the optimized production server on 127.0.0.1:8080.
-# Configuration validated in Fase 8 (F1) and refined after the BIOS ReBAR test (F1r):
+# Configuration validated in Phase 8 (F1) and refined after the BIOS ReBAR test (F1r):
 # see docs/RESULTS.md / docs/OPTIMIZATION.md.
 set -euo pipefail
 LAB="$(cd "$(dirname "$0")/.." && pwd)"

@@ -1,13 +1,13 @@
-# Normalizza i fine di riga: il progetto è sviluppato su Linux.
+# Normalize line endings: the project is developed on Linux.
 * text=auto eol=lf
 
-# Dati di benchmark: diff leggibile, ma file grandi.
+# Benchmark data: readable diffs, but large files.
 *.jsonl text
 *.csv   text
 
-# I log sono evidenza grezza: niente diff nei commit.
+# Logs are raw evidence: no diffs in commits.
 logs/** -diff
 
-# Il corpus è generato e voluminoso.
+# The corpus is generated and large.
 bench/corpus/code_corpus.txt      linguist-generated=true
 bench/corpus/code_corpus.tokens.json linguist-generated=true

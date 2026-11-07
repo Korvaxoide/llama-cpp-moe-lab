@@ -1,17 +1,17 @@
-# OPTIMIZATION.md — configurazione finale, perché, limiti e gestione
+# OPTIMIZATION.md — final configuration, why, limits and management
 
-Documento operativo della produzione `qwen36-35b-opt`.
-Tutte le cifre provengono da `results/*.jsonl`, `logs/exp/*` e `results/summary.csv`
-(mediane calcolate da `python3 bench/summarize.py`). Nessun valore è stimato a mano
-salvo dove è indicato esplicitamente un calcolo derivato.
+Operational document for the `qwen36-35b-opt` production.
+All figures come from `results/*.jsonl`, `logs/exp/*` and `results/summary.csv`
+(medians computed by `python3 bench/summarize.py`). No value is estimated by hand
+except where a derived calculation is explicitly indicated.
 
 ---
 
-## 1. La configurazione finale (F1r)
+## 1. The final configuration (F1r)
 
-Container di produzione: **`qwen36-35b-opt`**, immagine
+Production container: **`qwen36-35b-opt`**, image
 `ghcr.io/ggml-org/llama.cpp@sha256:0283744a35a6e7698b4f7a2d63360233dc769ece51e84bdba7aa187a33978276`
-(b11977, commit `7ac5727d6`), porta **`127.0.0.1:8080`**.
+(b11977, commit `7ac5727d6`), port **`127.0.0.1:8080`**.
 
 ```
 -m /models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf --host 0.0.0.0 --port 8080
@@ -22,76 +22,76 @@ Container di produzione: **`qwen36-35b-opt`**, immagine
 -ctk q8_0 -ctv q8_0 -b 3072 -ub 3072 --load-mode none
 ```
 
-Rispetto a F1 cambiano solo tre valori: `--spec-draft-n-ubatch 512` (nuovo),
-`-b 2048 → 3072` e `-ub 2048 → 3072`. Il resto è identico.
+Compared to F1 only three values change: `--spec-draft-n-ubatch 512` (new),
+`-b 2048 → 3072` and `-ub 2048 → 3072`. The rest is identical.
 
-Avvio/arresto: `scripts/prod_start.sh` / `scripts/prod_stop.sh` (vedi §7).
+Start/stop: `scripts/prod_start.sh` / `scripts/prod_stop.sh` (see §7).
 
-> **Nota ReBAR (2026-11-07).** Il BIOS ha ora `Re-size BAR Support` attivo
-> (BAR1 16384 MiB). Il ReBAR **non dà alcun guadagno misurabile** (test A/B su E00b:
-> PP −2.3…−6.5 %, TG uguale o peggiore, VRAM max +598 MiB) e riduce la VRAM libera
-> all'avvio di ~300 MiB. Con ReBAR la vecchia F1 non parte più; F1r parte grazie a
-> `--spec-draft-n-ubatch 512`, che riduce il buffer compute MTP da 942 a 235 MiB.
-> Se il ReBAR non serve per il gaming, disattivarlo è sicuro: F1r funziona in entrambi
-> i casi.
+> **ReBAR note (2026-11-07).** The BIOS now has `Re-size BAR Support` active
+> (BAR1 16384 MiB). ReBAR **gives no measurable gain** (A/B test on E00b:
+> PP −2.3…−6.5 %, TG equal or worse, VRAM max +598 MiB) and reduces free VRAM
+> at start-up by ~300 MiB. With ReBAR the old F1 no longer starts; F1r starts thanks to
+> `--spec-draft-n-ubatch 512`, which reduces the MTP compute buffer from 942 to 235 MiB.
+> If ReBAR is not needed for gaming, disabling it is safe: F1r works in both
+> cases.
 
-### 1.1 Riga per riga
+### 1.1 Line by line
 
-| Flag | Valore | Perché | Esperimento |
+| Flag | Value | Why | Experiment |
 |---|---|---|---|
-| `-m` | `/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf` | unico modello ammesso dal piano; mai copiato/convertito | — |
-| `--host` / `--port` | `0.0.0.0` / `8080` | dentro il container; la pubblicazione è solo `-p 127.0.0.1:8080:8080` | — |
-| `--ctx-size` | `200000` | requisito: contesto ≥ 200 000. Il runtime arrotonda a **`n_ctx = 200192`** (verificato in ogni log) | — |
-| `--n-predict` | `-1` | nessun tetto alla generazione (agenti che scrivono codice lungo) | — |
-| `--n-gpu-layers` | `auto` | tutti i layer sulla GPU; gli esperti sono poi spostati da `--n-cpu-moe`. Il warning `fit params ... tensor_buft_overrides already set` è innocuo: il contesto resta 200192 | BASELINE §7 |
-| `--n-cpu-moe` | `37` | esperti dei layer **0–36 in RAM**, esperti dei layer **37–39 in VRAM** (+~1.5 GiB). Gli esperti residenti non pagano né PCIe né CPU | **E45** (+8 % PP, +7 % TG vs `--cpu-moe`) |
-| `--moe-cache-mib` | `0` | **la cache MoE danneggia la generazione**: ogni miss costa un trasferimento PCIe, mentre la CPU calcola dalla DDR4 più in fretta. Utile solo al PP, e marginalmente | **E40** (TG +31/+59 % vs 1024), E41, E44 |
-| `--flash-attn` | `on` | obbligatorio per la KV quantizzata su CUDA (in log `FA_QUANTS ... q8_0-q8_0`); era già attivo nella baseline | BASELINE |
-| `--parallel` | `1` | un solo slot, che può usare l'intero contesto da 200K. Un LLM server alla volta (10 GB VRAM) | — |
-| `--jinja` | — | chat template del modello e **tool calling** (usato da OpenCode/Cline) | — |
-| `--spec-type` | `draft-mtp` | speculative decoding con la testa MTP (`nextn`) inclusa nel GGUF; già attivo nella baseline | BASELINE |
-| `--spec-draft-n-max` | `3` | 3 token draft per step: migliore su tutte le profondità testate, +10 % TG a 128K | **E51** (E50 n=1, E52 n=4 scartati) |
-| `--spec-draft-cpu-moe` | — | gli esperti del draft restano su CPU. **Non è neutra**: rimuoverla peggiora accettazione e TG a contesto lungo | **E54** |
-| `--spec-draft-n-ubatch` | `512` | **disaccoppia l'ubatch del contesto MTP da quello del target.** Senza, il draft eredita l'ubatch del target e il suo buffer compute cresce con esso (942 MiB a ubatch 2048, misurato in F1); con 512 il buffer scende a **235.52 MiB**. Costo: −1…−2 % PP | **F1r_dub128** (58.88 MiB con 128), F1r_ub3072 |
-| `-ctk` / `-ctv` | `q8_0` / `q8_0` | **solo KV del target** quantizzata. VRAM KV 3910 → 2077 MiB (−1833 MiB), qualità invariata (needle 5/5, coding 10/10) | **E11** (E10 target+draft scartato) |
-| `-b` | `3072` | batch logico; deve essere ≥ ubatch. Era 2048 | **F1r_ub3072** |
-| `-ub` | `3072` | ubatch 6× la baseline: **6× meno spostamenti di esperti per prompt**. PP +18…+25 % su F1 (che era già 4× la baseline) | **F1r_ub3072** (3584/4096 non provati: margine VRAM insufficiente) |
-| `--load-mode` | `none` | esperti in RAM **pinned `CUDA_Host`** invece che mmap pageable → DMA reale. PP +6.5 %, TG +12.6 % a 8K. Costo: ~14.3 GB di RAM non swappabile | **E30** (E31 `mlock` neutro) |
+| `-m` | `/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf` | the only model allowed by the plan; never copied/converted | — |
+| `--host` / `--port` | `0.0.0.0` / `8080` | inside the container; publication is only `-p 127.0.0.1:8080:8080` | — |
+| `--ctx-size` | `200000` | requirement: context ≥ 200 000. The runtime rounds it to **`n_ctx = 200192`** (verified in every log) | — |
+| `--n-predict` | `-1` | no cap on generation (agents that write long code) | — |
+| `--n-gpu-layers` | `auto` | all layers on the GPU; the experts are then moved by `--n-cpu-moe`. The warning `fit params ... tensor_buft_overrides already set` is harmless: the context stays 200192 | BASELINE §7 |
+| `--n-cpu-moe` | `37` | experts of layers **0–36 in RAM**, experts of layers **37–39 in VRAM** (+~1.5 GiB). Resident experts pay neither PCIe nor CPU | **E45** (+8 % PP, +7 % TG vs `--cpu-moe`) |
+| `--moe-cache-mib` | `0` | **the MoE cache harms generation**: every miss costs a PCIe transfer, while the CPU computes from DDR4 faster. It only helps PP, and marginally | **E40** (TG +31/+59 % vs 1024), E41, E44 |
+| `--flash-attn` | `on` | mandatory for quantized KV on CUDA (in the log `FA_QUANTS ... q8_0-q8_0`); it was already active in the baseline | BASELINE |
+| `--parallel` | `1` | a single slot, which can use the whole 200K context. One LLM server at a time (10 GB VRAM) | — |
+| `--jinja` | — | model chat template and **tool calling** (used by OpenCode/Cline) | — |
+| `--spec-type` | `draft-mtp` | speculative decoding with the MTP head (`nextn`) included in the GGUF; already active in the baseline | BASELINE |
+| `--spec-draft-n-max` | `3` | 3 draft token per step: best across all depths tested, +10 % TG at 128K | **E51** (E50 n=1, E52 n=4 discarded) |
+| `--spec-draft-cpu-moe` | — | the draft's experts stay on CPU. **It is not neutral**: removing it worsens acceptance and TG at long context | **E54** |
+| `--spec-draft-n-ubatch` | `512` | **decouples the MTP context ubatch from the target's.** Without it, the draft inherits the target's ubatch and its compute buffer grows with it (942 MiB at ubatch 2048, measured in F1); with 512 the buffer drops to **235.52 MiB**. Cost: −1…−2 % PP | **F1r_dub128** (58.88 MiB with 128), F1r_ub3072 |
+| `-ctk` / `-ctv` | `q8_0` / `q8_0` | **only the target's KV** quantized. KV VRAM 3910 → 2077 MiB (−1833 MiB), quality unchanged (needle 5/5, coding 10/10) | **E11** (E10 target+draft discarded) |
+| `-b` | `3072` | logical batch; it must be ≥ ubatch. It was 2048 | **F1r_ub3072** |
+| `-ub` | `3072` | ubatch 6× the baseline: **6× fewer expert movements per prompt**. PP +18…+25 % over F1 (which was already 4× the baseline) | **F1r_ub3072** (3584/4096 not tried: insufficient VRAM margin) |
+| `--load-mode` | `none` | experts in **pinned `CUDA_Host`** RAM instead of pageable mmap → real DMA. PP +6.5 %, TG +12.6 % at 8K. Cost: ~14.3 GB of non-swappable RAM | **E30** (E31 `mlock` neutral) |
 
 ---
 
-## 2. Impronta di memoria della configurazione finale
+## 2. Memory footprint of the final configuration
 
-Da `logs/exp/F1r_ub3072.log` (avvio, `n_ctx = 200192`, `n_ubatch = 3072`,
+From `logs/exp/F1r_ub3072.log` (start-up, `n_ctx = 200192`, `n_ubatch = 3072`,
 draft `n_ubatch = 512`):
 
-| Buffer | MiB | Note |
+| Buffer | MiB | Notes |
 |---|---|---|
-| `CUDA0 model buffer` | 3545.70 | non-esperti + esperti layer 37–39 (baseline: 1961.70) |
+| `CUDA0 model buffer` | 3545.70 | non-experts + experts of layers 37–39 (baseline: 1961.70) |
 | `CUDA0 KV buffer` (target, q8_0) | 2077.19 | baseline f16: 3910.00 |
 | `CUDA0 KV buffer` (draft MTP) | 391.00 | f16 |
-| `CUDA0 RS buffer` (Gated DeltaNet) | 251.25 | stato ricorrente |
-| `CUDA0 compute buffer` (contesto principale) | 1973.02 | ubatch 3072 (F1: 1437.02 a ubatch 2048) |
-| `CUDA0 compute buffer` (contesto MTP) | **235.52** | `--spec-draft-n-ubatch 512` (F1: 942.06) |
-| `CUDA0 MoE cache` | **0** | disattivata |
-| **Somma buffer GPU** | **≈ 8473** | proiezione `fit` 8473 MiB su 9029 liberi |
-| `CUDA_Host model buffer` | 12755.85 | esperti layer 0–36, pinned |
-| RAM disponibile minima | **8666 MiB** a 128K | pinnata ~14.3 GB; a 192K la misura è 10466 MiB |
+| `CUDA0 RS buffer` (Gated DeltaNet) | 251.25 | recurrent state |
+| `CUDA0 compute buffer` (main context) | 1973.02 | ubatch 3072 (F1: 1437.02 at ubatch 2048) |
+| `CUDA0 compute buffer` (MTP context) | **235.52** | `--spec-draft-n-ubatch 512` (F1: 942.06) |
+| `CUDA0 MoE cache` | **0** | disabled |
+| **Sum of GPU buffers** | **≈ 8473** | `fit` projection 8473 MiB out of 9029 free |
+| `CUDA_Host model buffer` | 12755.85 | experts of layers 0–36, pinned |
+| Minimum available RAM | **8666 MiB** at 128K | ~14.3 GB pinned; at 192K the measurement is 10466 MiB |
 
-Margine VRAM: a 8K `vram_max` 9541 → ~699 MiB; a 192K `vram_max` **9878** →
-**362 MiB** (desktop incluso). Il margine a 192K è il vincolo che impedisce ubatch
-3584/4096 e `--n-cpu-moe 36`. Con ReBAR la VRAM libera all'avvio è ~9029 MiB
-(prima ~9070): ~300 MiB in meno che la vecchia F1 non riusciva più a compensare.
+VRAM margin: at 8K `vram_max` 9541 → ~699 MiB; at 192K `vram_max` **9878** →
+**362 MiB** (desktop included). The margin at 192K is the constraint that prevents ubatch
+3584/4096 and `--n-cpu-moe 36`. With ReBAR the free VRAM at start-up is ~9029 MiB
+(previously ~9070): ~300 MiB less that the old F1 could no longer compensate for.
 
 ---
 
-## 3. Guadagni rispetto alla baseline
+## 3. Gains over the baseline
 
-Baseline `E00b_baseline` (configurazione originale, KV f16, ubatch 512, MoE cache 1024,
-mmap, MTP n_max 2) → `F1` → produzione `F1r` (`results/bench_F1r_ub3072.jsonl`,
+Baseline `E00b_baseline` (original configuration, KV f16, ubatch 512, MoE cache 1024,
+mmap, MTP n_max 2) → `F1` → production `F1r` (`results/bench_F1r_ub3072.jsonl`,
 `bench_F1r_ub3072_long.jsonl`).
 
-| Metrica | E00b | F1 | **F1r** | Δ F1r vs E00b |
+| Metric | E00b | F1 | **F1r** | Δ F1r vs E00b |
 |---|---|---|---|---|
 | PP 8K | 445.25 t/s | 1473.36 t/s | **1744.57 t/s** | **+292 %** |
 | PP 32K | 443.20 t/s | 1426.27 t/s | **1782.44 t/s** | **+302 %** |
@@ -105,23 +105,23 @@ mmap, MTP n_max 2) → `F1` → produzione `F1r` (`results/bench_F1r_ub3072.json
 | TTFT 32K | 73.94 s | 22.97 s | **18.38 s** | **−75 %** |
 | TTFT 128K | 328.63 s | 113.31 s | **93.93 s** | **−71 %** |
 | TTFT 192K | 509.6 s | 190.77 s | **162.60 s** | **−68 %** |
-| Lavoro agentico | 6.7 task/min | 8.77 task/min | **8.82 task/min** | **+32 %** |
-| Coding | 10/10 | **10/10** | **10/10** | invariato |
-| Needle 5 aghi @150K | 5/5 (f16) | **5/5** (q8_0) | non ripetuto⁷ | — |
-| Sessione lunga | 29 turni, ok | 29+29 turni, ok | 29 turni, ok | invariato |
+| Agentic work | 6.7 task/min | 8.77 task/min | **8.82 task/min** | **+32 %** |
+| Coding | 10/10 | **10/10** | **10/10** | unchanged |
+| Needle 5 needles @150K | 5/5 (f16) | **5/5** (q8_0) | not repeated⁷ | — |
+| Long session | 29 turns, ok | 29+29 turns, ok | 29 turns, ok | unchanged |
 | VRAM max | 9470 MiB | 9597 MiB | 9878 MiB | +408 MiB |
-| RAM disponibile min | 18631 MiB | 5517 MiB | 8666 MiB | −9965 MiB (pinned) |
+| Minimum available RAM | 18631 MiB | 5517 MiB | 8666 MiB | −9965 MiB (pinned) |
 
-⁷ Il needle test non è stato ripetuto su F1r: rispetto a F1 cambiano solo ubatch e buffer
-MTP, non la precisione della KV né i pesi. La sessione lunga è stata ripetuta (TTFT 5.66 s,
-PP 1142.1, TG 37.30, 2 risposte vuote su 29 turni).
+⁷ The needle test was not repeated on F1r: compared to F1 only the ubatch and the MTP buffer
+change, not the KV precision nor the weights. The long session was repeated (TTFT 5.66 s,
+PP 1142.1, TG 37.30, 2 empty responses out of 29 turns).
 
-F1r è più veloce di F1 in PP del **+18…+25 %** con TG invariata (dettaglio in
+F1r is faster than F1 in PP by **+18…+25 %** with TG unchanged (details in
 `RESULTS.md` §1.2).
 
-### 3.1 Da dove viene il guadagno (una variabile per volta)
+### 3.1 Where the gain comes from (one variable at a time)
 
-| Passo | Configurazione | PP 8K | TG 8K | TG 32K | Esperimento |
+| Step | Configuration | PP 8K | TG 8K | TG 32K | Experiment |
 |---|---|---|---|---|---|
 | 0 | baseline | 445.25 | 31.41 | 28.54 | E00b |
 | 1 | + ubatch 1024 | 753.93 | 30.32 | 28.56 | E01 (+69 % PP) |
@@ -131,226 +131,226 @@ F1r è più veloce di F1 in PP del **+18…+25 %** con TG invariata (dettaglio i
 | 5 | + MoE cache 0 | 1362.78 | 42.22 | 45.09 | E40 (TG +31/59 %) |
 | 6 | + `--n-cpu-moe 37` | 1468.84 | 48.49 | 48.66 | E45 (+8/7 %) |
 | 7 | + MTP n_max 3 | 1473.36 | 46.87 | 49.67 | E51 / F1_full |
-| 8 | + `--spec-draft-n-ubatch 128` (solo test VRAM) | 1455.47 | 46.45 | 48.63 | F1r_dub128 (−1.2 % PP) |
-| 9 | + `--spec-draft-n-ubatch 512` e ubatch 3072 | **1744.57** | **50.13** | **50.08** | F1r_ub3072 (+18/25 % PP vs F1) |
+| 8 | + `--spec-draft-n-ubatch 128` (VRAM test only) | 1455.47 | 46.45 | 48.63 | F1r_dub128 (−1.2 % PP) |
+| 9 | + `--spec-draft-n-ubatch 512` and ubatch 3072 | **1744.57** | **50.13** | **50.08** | F1r_ub3072 (+18/25 % PP vs F1) |
 
-Il passo 9 cambia due valori insieme perché sono legati: senza `--spec-draft-n-ubatch`
-il buffer compute del draft crescerebbe con l'ubatch e non entrerebbe in VRAM. Il passo 8
-misura da solo il costo del disaccoppiamento (−1.2 % PP, −883 MiB di buffer draft).
+Step 9 changes two values together because they are linked: without `--spec-draft-n-ubatch`
+the draft's compute buffer would grow with the ubatch and would not fit in VRAM. Step 8
+measures by itself the cost of the decoupling (−1.2 % PP, −883 MiB of draft buffer).
 
-Il grosso del PP viene da **ubatch** (passi 1 e 3): 16 → 4 passaggi completi degli esperti
-per un prompt da 8K. Il grosso della TG viene da **cache MoE spenta + esperti in VRAM**
-(passi 5 e 6). La KV q8_0 non è una velocizzazione: è ciò che libera la VRAM necessaria
-per l'ubatch 2048 e per i 3 layer di esperti residenti, senza perdita di qualità misurata.
+The bulk of the PP comes from **ubatch** (steps 1 and 3): 16 → 4 full expert passes
+for an 8K prompt. The bulk of the TG comes from **MoE cache off + experts in VRAM**
+(steps 5 and 6). The q8_0 KV is not a speed-up: it is what frees the VRAM needed
+for ubatch 2048 and for the 3 resident expert layers, without measured quality loss.
 
 ---
 
-## 4. Limiti dimostrati
+## 4. Demonstrated limits
 
-### 4.1 PCIe Gen3 x16 è il limite della baseline
+### 4.1 PCIe Gen3 x16 is the baseline's limit
 
-La scheda madre B450 espone la RTX 3080 su **PCIe Gen3 x16** (la GPU è Gen4-capable,
-l'host no; `pcie_gen_max = 3` in ogni riga di benchmark). Ogni ubatch di prompt deve
-leggere dalla RAM gli esperti MoE che non stanno in VRAM.
+The B450 motherboard exposes the RTX 3080 over **PCIe Gen3 x16** (the GPU is Gen4-capable,
+the host is not; `pcie_gen_max = 3` in every benchmark row). Every prompt ubatch must
+read from RAM the MoE experts that do not fit in VRAM.
 
-Calcolo dal dato baseline (`results/bench_E00b_baseline.jsonl`, 8K, mediana):
+Calculation from the baseline datum (`results/bench_E00b_baseline.jsonl`, 8K, median):
 - 8192 token / ubatch 512 = **16 ubatch**;
-- esperti totali = **13 942 MiB = 13.62 GiB**; con `--cpu-moe` nessun esperto è residente,
-  quindi un ubatch grande tocca praticamente tutti gli esperti → ~13.62 GiB per ubatch;
-- `prompt_ms` mediano = **18 398.6 ms = 18.4 s**.
+- total experts = **13 942 MiB = 13.62 GiB**; with `--cpu-moe` no expert is resident,
+  so a large ubatch touches practically all experts → ~13.62 GiB per ubatch;
+- median `prompt_ms` = **18 398.6 ms = 18.4 s**.
 
 ```
 16 × 13.62 GiB / 18.4 s ≈ 11.8 GiB/s ≈ 12.7 GB/s
 ```
 
-È il limite pratico di Gen3 x16 (~12.6–12.7 GB/s effettivi dopo l'encoding).
-**La baseline era quindi satura sul bus, non sulla GPU.** Questo spiega perché:
-- raddoppiare l'ubatch dà guadagni quasi lineari (metà passaggi → metà byte);
-- la MoE cache non aiuta la generazione (aggiunge lavoro, non riduce i byte utili);
-- nessun tuning di thread/priorità poteva compensare (Fase 6: tutto neutro o peggio).
+It is the practical limit of Gen3 x16 (~12.6–12.7 GB/s effective after encoding).
+**The baseline was therefore saturated on the bus, not on the GPU.** This explains why:
+- doubling the ubatch gives almost linear gains (half the passes → half the bytes);
+- the MoE cache does not help generation (it adds work, it does not reduce the useful bytes);
+- no thread/priority tuning could compensate (Phase 6: everything neutral or worse).
 
-Con F1 gli esperti residenti (3/40 layer) e l'ubatch 2048 riducono i byte per prompt:
-al 8K servono 4 sweep di ~12.6 GiB in 5.56 s ≈ 9.1 GiB/s. **F1 non è più al tetto del bus**;
-il margine residuo è CPU/compute, non PCIe. Con F1r (ubatch 3072) il PP sale a 1744.57 t/s:
-i byte per prompt scendono ancora e il bus resta sotto il tetto.
+With F1 the resident experts (3/40 layers) and ubatch 2048 reduce the bytes per prompt:
+at 8K, 4 sweeps of ~12.6 GiB take 5.56 s ≈ 9.1 GiB/s. **F1 is no longer at the bus ceiling**;
+the residual margin is CPU/compute, not PCIe. With F1r (ubatch 3072) the PP rises to 1744.57 t/s:
+the bytes per prompt drop further and the bus stays below the ceiling.
 
-Il **Resizable BAR** non cambia questo quadro: allarga la finestra BAR1 (256 MiB → 16384 MiB)
-ma **non aumenta la banda Gen3 x16**. Il test A/B su E00b mostra PP −2.3…−6.5 %, TG uguale
-o peggiore e VRAM massima +598 MiB (`RESULTS.md` §1.3). Il ReBAR è utile solo se serve
-al gaming; per llama.cpp è neutro o leggermente negativo.
+**Resizable BAR** does not change this picture: it widens the BAR1 window (256 MiB → 16384 MiB)
+but **does not increase Gen3 x16 bandwidth**. The A/B test on E00b shows PP −2.3…−6.5 %, TG equal
+or worse and maximum VRAM +598 MiB (`RESULTS.md` §1.3). ReBAR is only useful if needed
+for gaming; for llama.cpp it is neutral or slightly negative.
 
-### 4.2 VRAM (10 GB) e contesto
+### 4.2 VRAM (10 GB) and context
 
-Il contesto non è riducibile sotto 200K per requisito. Con KV q8_0 il target occupa
-2077 MiB; restano ~6.4 GiB per pesi non-esperti, esperti residenti, compute buffer e MTP.
-`-ub 4096` è **OOM** anche con KV q8_0 (`E21`): con il disaccoppiamento del draft
-(`--spec-draft-n-ubatch`) il limite pratico misurato è **ubatch 3072**, che a 192K
-lascia **362 MiB** di margine. Non c'è spazio per altri 3 layer di esperti
-(`E46`, `--n-cpu-moe 36`: +1–2 % e VRAM max 9829 MiB a 32K) né per ubatch 3584/4096.
+The context cannot be reduced below 200K by requirement. With KV q8_0 the target occupies
+2077 MiB; ~6.4 GiB remain for non-expert weights, resident experts, compute buffer and MTP.
+`-ub 4096` is **OOM** even with KV q8_0 (`E21`): with the draft decoupling
+(`--spec-draft-n-ubatch`) the practical limit measured is **ubatch 3072**, which at 192K
+leaves **362 MiB** of margin. There is no room for another 3 expert layers
+(`E46`, `--n-cpu-moe 36`: +1–2 % and VRAM max 9829 MiB at 32K) nor for ubatch 3584/4096.
 
-Con ReBAR attivo la VRAM libera all'avvio è ~9029 MiB (prima ~9070): ~300 MiB in meno.
-La vecchia F1 (buffer draft 942 MiB) non entra più; F1r entra perché il buffer draft
-scende a 235.52 MiB. Se il ReBAR viene disattivato, F1r resta valida (anzi, con ~300 MiB
-di margine in più).
+With ReBAR active the free VRAM at start-up is ~9029 MiB (previously ~9070): ~300 MiB less.
+The old F1 (draft buffer 942 MiB) no longer fits; F1r fits because the draft buffer
+drops to 235.52 MiB. If ReBAR is disabled, F1r remains valid (indeed, with ~300 MiB
+more margin).
 
-### 4.3 Un solo server
+### 4.3 A single server
 
-Un secondo `llama-server` sullo stesso modello non entra in 10 GB. La produzione è
-`parallel 1`, un container alla volta; il rollback richiede di fermare l'altro (§7).
+A second `llama-server` on the same model does not fit in 10 GB. Production is
+`parallel 1`, one container at a time; rollback requires stopping the other one (§7).
 
 ---
 
-## 5. Provato e scartato
+## 5. Tried and discarded
 
-| Esperimento | Cosa | Perché scartato |
+| Experiment | What | Why discarded |
 |---|---|---|
-| `E02_ub2048` (f16) | ubatch 2048 con KV f16 | **OOM** all'avvio (il contesto MTP chiede 942 MiB) |
-| `E03` / `E21` (ub4096) | ubatch 4096 | **OOM** anche con KV q8_0 (`allocating 1884.12 MiB` fallita) |
-| `E10_kvq8` | KV q8_0 su target **e** draft | TG −4.3 % a 32K, nessun beneficio di VRAM utile |
-| `E31_loadnone_mlock` | aggiunta `--mlock` | neutro; TG 8K −3.3 %, richiede ulimit speciale |
-| `E41_mc1536` | MoE cache 1536 | meglio di 1024 ma **peggio di 0** (TG 37.5/32.2 vs 42.2/45.1) |
-| `E44_mcMAX` | MoE cache massima (1792) | TG 39.0/36.3, ancora sotto cache 0 |
-| `E46_ncmoe36` | 4 layer di esperti in VRAM | +1–2 % (rumore), margine VRAM ~45 MiB |
+| `E02_ub2048` (f16) | ubatch 2048 with KV f16 | **OOM** at start-up (the MTP context asks for 942 MiB) |
+| `E03` / `E21` (ub4096) | ubatch 4096 | **OOM** even with KV q8_0 (`allocating 1884.12 MiB` failed) |
+| `E10_kvq8` | KV q8_0 on target **and** draft | TG −4.3 % at 32K, no useful VRAM benefit |
+| `E31_loadnone_mlock` | added `--mlock` | neutral; TG 8K −3.3 %, requires special ulimit |
+| `E41_mc1536` | MoE cache 1536 | better than 1024 but **worse than 0** (TG 37.5/32.2 vs 42.2/45.1) |
+| `E44_mcMAX` | maximum MoE cache (1792) | TG 39.0/36.3, still below cache 0 |
+| `E46_ncmoe36` | 4 expert layers in VRAM | +1–2 % (noise), VRAM margin ~45 MiB |
 | `E50_nmax1` | MTP 1 token | TG 46.8/44.4/37.4 < n_max 3 |
-| `E52_nmax4` | MTP 4 token | accettazione crolla a 0.77–0.78, TG peggiore a 8K/128K |
-| `E53_pmin05` | `--spec-draft-p-min 0.5` | TG 46.2/49.9/43.6, peggiore |
-| `E54_nodraftmoe` | rimozione `--spec-draft-cpu-moe` | accettazione e TG a lungo contesto peggiorano |
-| `E60_t7` / `E61_t16` | thread 7 / 16 | la parte CPU perde throughput; SMT danneggia gli esperti AVX2 |
-| `E62` / `E63` | `GGML_OP_OFFLOAD_MIN_BATCH` 64 / 128 | −18 % e peggio: offloadare conviene anche per batch piccoli |
-| `E64_prio` | `--prio 2` | effetto negativo netto |
-| `E65_poll` | `--poll 0` | neutro (<5 %), si resta sul default |
-| `E70_b12124` | runtime b12124 | nessun guadagno ≥5 %; TG 8K −10.4 %, acc 0.77 vs 0.92 |
-| `E00b_rebar` | ReBAR nel BIOS (BAR1 16 GiB) | PP −2.3…−6.5 %, TG uguale o peggiore, VRAM max +598 MiB: non alza la banda Gen3. Testato il 2026-11-07, non è un'ottimizzazione |
-| `F2` (mmap) | F1 senza `--load-mode none` | ~5 % più lento in PP; **non scartato**: documentato come alternativa conservativa (RAM min 18.7 GB invece di 5.5 GB) |
+| `E52_nmax4` | MTP 4 token | acceptance collapses to 0.77–0.78, TG worse at 8K/128K |
+| `E53_pmin05` | `--spec-draft-p-min 0.5` | TG 46.2/49.9/43.6, worse |
+| `E54_nodraftmoe` | removal of `--spec-draft-cpu-moe` | acceptance and TG at long context worsen |
+| `E60_t7` / `E61_t16` | thread 7 / 16 | the CPU part loses throughput; SMT harms the AVX2 experts |
+| `E62` / `E63` | `GGML_OP_OFFLOAD_MIN_BATCH` 64 / 128 | −18 % and worse: offloading is worthwhile even for small batches |
+| `E64_prio` | `--prio 2` | net negative effect |
+| `E65_poll` | `--poll 0` | neutral (<5 %), we stay on the default |
+| `E70_b12124` | runtime b12124 | no gain ≥5 %; TG 8K −10.4 %, acc 0.77 vs 0.92 |
+| `E00b_rebar` | ReBAR in the BIOS (BAR1 16 GiB) | PP −2.3…−6.5 %, TG equal or worse, VRAM max +598 MiB: it does not raise Gen3 bandwidth. Tested on 2026-11-07, it is not an optimization |
+| `F2` (mmap) | F1 without `--load-mode none` | ~5 % slower in PP; **not discarded**: documented as a conservative alternative (min RAM 18.7 GB instead of 5.5 GB) |
 
 ---
 
-## 6. Proposte che richiedono autorizzazione (NON eseguite)
+## 6. Proposals that require authorization (NOT executed)
 
-Queste modifiche esulano dai vincoli del laboratorio (niente sudo, niente modifiche a
-governor/swap/driver/BIOS). Sono solo proposte, con l'effetto atteso dedotto dai dati.
+These changes fall outside the lab's constraints (no sudo, no changes to
+governor/swap/driver/BIOS). They are only proposals, with the expected effect inferred from the data.
 
-1. **Governor CPU `performance` + EPP `performance`** (ora `powersave`/`balance_performance`).
-   La parte CPU calcola gli esperti dei layer 0–36: un clock più alto e più stabile può
-   ridurre la coda CPU durante la generazione. Effetto atteso: piccolo su PP (legato a PCIe),
-   possibile su TG; da misurare.
-2. **NVIDIA persistence mode** (`nvidia-smi -pm 1`). Evita il costo di inizializzazione
-   del driver dopo un arresto; non cambia il throughput a regime.
-3. **Resizable BAR nel BIOS** — **già testato il 2026-11-07**: BAR1 è passato da 256 MiB a
-   16384 MiB. Nessun guadagno (PP −2.3…−6.5 %, TG uguale o peggiore, VRAM max +598 MiB);
-   la banda resta Gen3 x16. Se non serve per il gaming, si può disattivare senza perdite:
-   F1r funziona con ReBAR attivo e disattivo.
-4. **Piattaforma PCIe Gen4** (scheda madre + CPU AM4/AM5 compatibili). È l'unico modo per
-   alzare il tetto del bus oltre ~12.7 GB/s. Un raddoppio teorico del bus non raddoppia
-   il throughput (a F1 il bus non è più saturo), ma riduce il costo residuo degli esperti
-   non residenti. Costo hardware significativo: valutare solo se il carico cresce.
-5. **CPU con L3 più grande** (es. Ryzen 5000/5800X3D su AM4). Gli esperti attivi sono
-   ~10.4 MiB/layer: una L3 più grande può trattenerne di più e ridurre la pressione DRAM
-   sulla parte CPU. Richiede cambio CPU e verifica BIOS.
-6. **Ventole/power limit**: non toccati. Il power limit è già al massimo (370 W) e la GPU
-   non è il collo di bottiglia (utilizzazione media 77–94 % durante i test).
+1. **CPU governor `performance` + EPP `performance`** (now `powersave`/`balance_performance`).
+   The CPU part computes the experts of layers 0–36: a higher and more stable clock can
+   reduce the CPU queue during generation. Expected effect: small on PP (tied to PCIe),
+   possible on TG; to be measured.
+2. **NVIDIA persistence mode** (`nvidia-smi -pm 1`). Avoids the driver initialization cost
+   after a stop; it does not change steady-state throughput.
+3. **Resizable BAR in the BIOS** — **already tested on 2026-11-07**: BAR1 went from 256 MiB to
+   16384 MiB. No gain (PP −2.3…−6.5 %, TG equal or worse, VRAM max +598 MiB);
+   bandwidth remains Gen3 x16. If it is not needed for gaming, it can be disabled without loss:
+   F1r works with ReBAR active and disabled.
+4. **PCIe Gen4 platform** (motherboard + compatible AM4/AM5 CPU). It is the only way to
+   raise the bus ceiling above ~12.7 GB/s. A theoretical doubling of the bus does not double
+   the throughput (with F1 the bus is no longer saturated), but it reduces the residual cost of the
+   non-resident experts. Significant hardware cost: evaluate only if the load grows.
+5. **CPU with larger L3** (e.g. Ryzen 5000/5800X3D on AM4). The active experts are
+   ~10.4 MiB/layer: a larger L3 can retain more of them and reduce DRAM pressure
+   on the CPU part. Requires a CPU change and BIOS verification.
+6. **Fans/power limit**: not touched. The power limit is already at maximum (370 W) and the GPU
+   is not the bottleneck (average utilization 77–94 % during the tests).
 
-Nessuna di queste è stata applicata: la produzione gira con la configurazione §1.
+None of these was applied: production runs with the configuration §1.
 
 ---
 
-## 7. Avvio, arresto, rollback
+## 7. Start, stop, rollback
 
-Prerequisiti: un solo server alla volta. `bin/dk` va usato al posto di `docker`.
+Prerequisites: one server at a time. `bin/dk` must be used instead of `docker`.
 
 ```bash
-# Avvio produzione ottimizzata (attende /health, fino a 600 s)
+# Start the optimized production server (waits for /health, up to 600 s)
 scripts/prod_start.sh
 
 # Verifica
 curl -s http://127.0.0.1:8080/health
 curl -s http://127.0.0.1:8080/v1/models
 
-# Arresto (il container qwen36-35b-opt resta, pronto al riavvio)
+# Stop (the qwen36-35b-opt container stays, ready to restart)
 scripts/prod_stop.sh
 ```
 
-**Rollback all'originale** (container `qwen36-35b`, mai cancellato):
+**Rollback to the original** (container `qwen36-35b`, never deleted):
 
 ```bash
 scripts/prod_stop.sh                 # ferma l'ottimizzato
-bin/dk start qwen36-35b              # avvia l'originale sulla stessa 127.0.0.1:8080
+bin/dk start qwen36-35b              # start the original on the same 127.0.0.1:8080
 curl -s http://127.0.0.1:8080/v1/models   # deve rispondere 200
 ```
 
-Ritorno all'ottimizzato:
+Return to the optimized one:
 
 ```bash
 bin/dk stop qwen36-35b
 scripts/prod_start.sh
 ```
 
-Il rollback è stato provato in Fase 9: originale avviato, HTTP 200, poi fermato e
-`qwen36-35b-opt` riavviato. Non eseguire mai i due container insieme (VRAM insufficiente).
+The rollback was tried in Phase 9: original started, HTTP 200, then stopped and
+`qwen36-35b-opt` restarted. Never run the two containers together (insufficient VRAM).
 
 ---
 
-## 8. Impostazioni consigliate nei client
+## 8. Recommended settings in the clients
 
-Endpoint OpenAI-compatibile: **`http://127.0.0.1:8080/v1`**
-(modello riportato da `/v1/models`: `/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf`).
+OpenAI-compatible endpoint: **`http://127.0.0.1:8080/v1`**
+(model reported by `/v1/models`: `/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf`).
 
-| Client | Impostazione | Valore |
+| Client | Setting | Value |
 |---|---|---|
 | OpenCode | `baseURL` | `http://127.0.0.1:8080/v1` |
 | OpenCode | `limit.context` | **200000** |
-| OpenCode | `limit.output` | ≥ 8192 (generazione non limitata lato server: `--n-predict -1`) |
+| OpenCode | `limit.output` | ≥ 8192 (generation not limited on the server side: `--n-predict -1`) |
 | Cline / Roo | context window | **200000** |
 | Cline / Roo | max output | ≥ 8192 |
-| Tutti | tool calling | richiede `--jinja` (già attivo); il template del modello è Qwen3.6 |
-| Tutti | thinking | per i task di codice inviare `chat_template_kwargs: {"enable_thinking": false}` (come in `bench/agentic.py`) |
+| All | tool calling | requires `--jinja` (already active); the model template is Qwen3.6 |
+| All | thinking | for coding tasks send `chat_template_kwargs: {"enable_thinking": false}` (as in `bench/agentic.py`) |
 
-Nota: il server ha un solo slot (`--parallel 1`). Due client che generano insieme si
-serializzano; è il compromesso per avere l'intero contesto da 200K su una sola GPU.
+Note: the server has a single slot (`--parallel 1`). Two clients generating at the same time
+serialize; it is the trade-off for having the entire 200K context on a single GPU.
 
 ---
 
-## 9. Convivenza con il desktop e il gaming
+## 9. Coexistence with the desktop and gaming
 
-La macchina è anche una workstation desktop con Plasma/Wayland e viene usata per giocare.
-Con il server LLM attivo restano **~280–650 MiB di VRAM** e **~5.5–8.7 GB di RAM**
-disponibili: sono risorse tolte al compositor e ai giochi. Non è un guasto hardware, ma
-una condizione di esaurimento memoria, ed è documentata nei log del 2026-11-06/07:
+The machine is also a desktop workstation with Plasma/Wayland and is used for gaming.
+With the LLM server active **~280–650 MiB of VRAM** and **~5.5–8.7 GB of RAM** remain
+available: they are resources taken from the compositor and the games. It is not a hardware fault, but
+a condition of memory exhaustion, and it is documented in the logs of 2026-11-06/07:
 
-| Ora (boot) | Evento | Evidenza |
+| Time (boot) | Event | Evidence |
 |---|---|---|
-| 13:15:50 | avvio `qwen36-35b-opt` (config F1) | `dockerd ... ep=qwen36-35b-opt` |
-| 14:08:12 → 19:06:18 | **3087** errori del compositor per VRAM esaurita | `nvidia-drm ... Failed to allocate NVKMS memory for GEM object` |
-| 19:06:18 | fallback del compositor alla RAM di sistema (artefatti/stutter) | `Failed to allocate NVKMS video memory ... trying to fall back to sysmem` |
-| 22:59:46 → 23:58:27 | seconda sessione server | `prod_start.sh` / `prod_stop.sh` |
-| 23:00:47 → 23:59:36 | **161** errori NVKMS, stessi messaggi | `journalctl -k` |
-| 00:00:55 | `systemd-oomd` uccide **plasmashell** (42 processi) | pressione RAM 90.2 % > 80 % per > 30 s |
-| 00:01:11 | `systemd-oomd` uccide **Brave** (421 processi) | Chromium: picco 10.8 GB RAM, 14.1 GB swap |
+| 13:15:50 | start of `qwen36-35b-opt` (config F1) | `dockerd ... ep=qwen36-35b-opt` |
+| 14:08:12 → 19:06:18 | **3087** compositor errors due to exhausted VRAM | `nvidia-drm ... Failed to allocate NVKMS memory for GEM object` |
+| 19:06:18 | compositor fallback to system RAM (artifacts/stutter) | `Failed to allocate NVKMS video memory ... trying to fall back to sysmem` |
+| 22:59:46 → 23:58:27 | second server session | `prod_start.sh` / `prod_stop.sh` |
+| 23:00:47 → 23:59:36 | **161** NVKMS errors, same messages | `journalctl -k` |
+| 00:00:55 | `systemd-oomd` kills **plasmashell** (42 processes) | RAM pressure 90.2 % > 80 % for > 30 s |
+| 00:01:11 | `systemd-oomd` kills **Brave** (421 processes) | Chromium: peak 10.8 GB RAM, 14.1 GB swap |
 
-I sintomi riferiti (artefatti grafici nel browser muovendo il mouse, avviso di
-"performance grafiche degradate") sono coerenti con questi due meccanismi:
+The reported symptoms (graphical artifacts in the browser when moving the mouse, warning of
+"degraded graphics performance") are consistent with these two mechanisms:
 
-1. **VRAM esaurita** — la GPU ha 10 GB e il server ne occupa 9.5–9.9. KWin non riesce ad
-   allocare i buffer dei nuovi frame (NVKMS) e ripiega sulla RAM di sistema: da qui
-   glitch e scatti.
-2. **RAM in pressione** — `--load-mode none` tiene ~14.3 GB pinned e non swappabili.
-   Con browser aperti si arriva al 90 % e `systemd-oomd` uccide prima la shell del
-   desktop, poi il browser.
+1. **VRAM exhausted** — the GPU has 10 GB and the server occupies 9.5–9.9 of them. KWin cannot
+   allocate the buffers for the new frames (NVKMS) and falls back to system RAM: hence
+   glitches and stutters.
+2. **RAM under pressure** — `--load-mode none` keeps ~14.3 GB pinned and non-swappable.
+   With browsers open it reaches 90 % and `systemd-oomd` kills first the desktop shell,
+   then the browser.
 
-Escluso il danno hardware: nessun errore **Xid** della GPU e nessuna pagina ritirata
+Hardware damage excluded: no GPU **Xid** errors and no retired pages
 (`Retired Pages`/`Remapped Rows` = N/A) in `nvidia-smi -q`.
 
-### 9.1 Regole pratiche
+### 9.1 Practical rules
 
-- **Prima di giocare o di usare la GPU per altro: `scripts/prod_stop.sh`.** È la
-  soluzione più semplice e non costa nulla in velocità quando il server serve.
-- Se serve tenere il server acceso mentre si usa il desktop, **non è previsto** un profilo
-  leggero dedicato (scelta dell'utente: si ferma il server). Restano come opzioni
-  documentate, se un giorno servissero: `--load-mode mmap` restituisce ~13 GB di RAM
-  (costo ~5 % PP, misurato in `F2`), `--cpu-moe` restituisce ~1.5 GiB di VRAM (costo
-  ~7 % TG, misurato in `E45`), un contesto più corto riduce la KV in proporzione
-  (2077 MiB a 200K → ~340 MiB a 32K, calcolo lineare).
-- Il ReBAR **non è la causa** di questi sintomi: il test A/B mostra che non migliora né
-  la banda né la VRAM disponibile. Se aiuta nei giochi, va bene tenerlo; F1r funziona
-  identica con ReBAR attivo o disattivo.
+- **Before gaming or using the GPU for anything else: `scripts/prod_stop.sh`.** It is the
+  simplest solution and costs nothing in speed when the server is serving.
+- If the server must stay on while using the desktop, **no** dedicated light profile
+  **is planned** (user's choice: the server is stopped). The following remain as documented
+  options, should they ever be needed: `--load-mode mmap` returns ~13 GB of RAM
+  (cost ~5 % PP, measured in `F2`), `--cpu-moe` returns ~1.5 GiB of VRAM (cost
+  ~7 % TG, measured in `E45`), a shorter context reduces the KV proportionally
+  (2077 MiB at 200K → ~340 MiB at 32K, linear calculation).
+- ReBAR **is not the cause** of these symptoms: the A/B test shows that it improves neither
+  the bandwidth nor the available VRAM. If it helps in games, it is fine to keep it; F1r works
+  identically with ReBAR active or disabled.
 

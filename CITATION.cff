@@ -14,7 +14,7 @@ authors:
 repository-code: "https://github.com/Korvaxoide/llama-cpp-moe-lab"
 url: "https://github.com/Korvaxoide/llama-cpp-moe-lab"
 license: MIT
-version: 1.0.0
+version: 1.1.0
 date-released: "2026-11-07"
 keywords:
   - llama.cpp

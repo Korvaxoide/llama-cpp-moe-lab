@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Validazione statica della repo (usata dalla CI e in locale).
+"""Static validation of the repository (used by CI and locally).
 
-Controlla, senza dipendenze esterne:
-  1. ogni `results/*.jsonl` è JSON valido;
-  2. ogni riga di `bench_*.jsonl` ha `n_ctx == 200192` (requisito del laboratorio);
-  3. `results/summary.csv` ha l'intestazione attesa e almeno una riga;
-  4. ogni link relativo nei file Markdown punta a un file esistente;
-  5. tutti i file Python compilano;
-  6. non ci sono path personali assoluti (`/home/...`) nei file versionati.
+Checks, with no external dependencies:
+  1. every `results/*.jsonl` is valid JSON;
+  2. every row of `bench_*.jsonl` has `n_ctx == 200192` (lab requirement);
+  3. `results/summary.csv` has the expected header and at least one row;
+  4. every relative link in Markdown files points to an existing file;
+  5. all Python files compile;
+  6. there are no absolute personal paths (`/home/...`) in tracked files.
 
-Uso: python3 scripts/check_repo.py
-Exit code 0 se tutto passa, 1 altrimenti.
+Usage: python3 scripts/check_repo.py
+Exit code 0 if everything passes, 1 otherwise.
 """
 from __future__ import annotations
 
@@ -52,42 +52,42 @@ def check_jsonl() -> int:
     errors = 0
     files = sorted((LAB / "results").glob("*.jsonl"))
     if not files:
-        fail("nessun file results/*.jsonl")
+        fail("no results/*.jsonl files")
         return 1
     for path in files:
         try:
             rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
         except json.JSONDecodeError as exc:
-            fail(f"{path.relative_to(LAB)}: JSON non valido ({exc})")
+            fail(f"{path.relative_to(LAB)}: invalid JSON ({exc})")
             errors += 1
             continue
         if not rows:
-            fail(f"{path.relative_to(LAB)}: vuoto")
+            fail(f"{path.relative_to(LAB)}: empty")
             errors += 1
             continue
         if path.name.startswith("bench_"):
             bad = [r.get("n_ctx") for r in rows if r.get("n_ctx") != EXPECTED_CTX]
             if bad:
-                fail(f"{path.relative_to(LAB)}: n_ctx inatteso {sorted(set(bad))}")
+                fail(f"{path.relative_to(LAB)}: unexpected n_ctx {sorted(set(bad))}")
                 errors += 1
-        ok(f"{path.relative_to(LAB)}: {len(rows)} righe")
+        ok(f"{path.relative_to(LAB)}: {len(rows)} rows")
     return errors
 
 
 def check_summary() -> int:
     path = LAB / "results" / "summary.csv"
     if not path.exists():
-        fail("results/summary.csv manca")
+        fail("results/summary.csv is missing")
         return 1
     with path.open(newline="", encoding="utf-8") as fh:
         rows = list(csv.reader(fh))
     if not rows or rows[0] != SUMMARY_HEADER:
-        fail(f"results/summary.csv: intestazione inattesa {rows[0] if rows else 'vuoto'}")
+        fail(f"results/summary.csv: unexpected header {rows[0] if rows else 'empty'}")
         return 1
     if len(rows) < 2:
-        fail("results/summary.csv: nessuna riga di dati")
+        fail("results/summary.csv: no data rows")
         return 1
-    ok(f"results/summary.csv: {len(rows) - 1} righe di dati")
+    ok(f"results/summary.csv: {len(rows) - 1} data rows")
     return 0
 
 
@@ -105,10 +105,10 @@ def check_links() -> int:
                     continue
                 resolved = (path.parent / target).resolve()
                 if not resolved.exists():
-                    fail(f"{path.relative_to(LAB)}: link rotto -> {target}")
+                    fail(f"{path.relative_to(LAB)}: broken link -> {target}")
                     errors += 1
     if not errors:
-        ok(f"link relativi: {len(files)} file Markdown")
+        ok(f"relative links: {len(files)} Markdown files")
     return errors
 
 
@@ -119,10 +119,10 @@ def check_python() -> int:
         try:
             py_compile.compile(str(path), doraise=True)
         except py_compile.PyCompileError as exc:
-            fail(f"{path.relative_to(LAB)}: non compila ({exc.msg})")
+            fail(f"{path.relative_to(LAB)}: does not compile ({exc.msg})")
             errors += 1
     if not errors:
-        ok(f"Python: {len(files)} file compilano")
+        ok(f"Python: {len(files)} files compile")
     return errors
 
 
@@ -141,11 +141,11 @@ def check_private_paths() -> int:
             continue
         for needle in suspects:
             if needle in text:
-                fail(f"{path.relative_to(LAB)}: path personale '{needle}'")
+                fail(f"{path.relative_to(LAB)}: personal path '{needle}'")
                 errors += 1
                 break
     if not errors:
-        ok("nessun path personale assoluto")
+        ok("no absolute personal paths")
     return errors
 
 
@@ -159,9 +159,9 @@ def main() -> int:
     errors += check_private_paths()
     print()
     if errors:
-        print(f"{errors} problema/i")
+        print(f"{errors} problem(s)")
         return 1
-    print("tutto ok")
+    print("all checks passed")
     return 0
 
 

@@ -4,9 +4,9 @@
 [![CI](https://github.com/Korvaxoide/llama-cpp-moe-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/Korvaxoide/llama-cpp-moe-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.x%20%C2%B7%20stdlib-blue)
 
-Laboratorio di ottimizzazione di **llama.cpp** su una singola workstation
-(RTX 3080 10 GB + Ryzen 7 3700X, PCIe Gen3 x16), con un solo modello:
-`Qwen3.6-35B-A3B-UD-Q3_K_M.gguf` (MoE ibrido Qwen3.6, contesto 262 144).
+Optimization lab for **llama.cpp** on a single workstation
+(RTX 3080 10 GB + Ryzen 7 3700X, PCIe Gen3 x16), with a single model:
+`Qwen3.6-35B-A3B-UD-Q3_K_M.gguf` (Qwen3.6 hybrid MoE, 262 144 context).
 
 > **TL;DR (English).** Reproducible tuning of `llama-server` for a 35B MoE model on a
 > single 10 GB GPU with a 200K-token context. One variable per experiment, every number
@@ -15,103 +15,103 @@ Laboratorio di ottimizzazione di **llama.cpp** su una singola workstation
 > time-to-first-token **−75 %**, with coding quality unchanged (10/10).
 > The dominant bottleneck was **PCIe Gen3 x16**, not the GPU, and the main levers were
 > batch size, KV quantization and MoE placement. ReBAR was measured and gave **no benefit**.
-> Docs are in Italian; the data and scripts are language-neutral.
+> Documentation is in English; the data and scripts are language-neutral.
 
-## Risultati
+## Results
 
-Configurazione di produzione (`qwen36-35b-opt`, profilo **F1r**) rispetto alla
-configurazione originale misurata sullo stesso hardware:
+Production configuration (`qwen36-35b-opt`, profile **F1r**) compared to the
+original configuration measured on the same hardware:
 
-| Metrica | Baseline | Produzione (F1r) | Δ |
+| Metric | Baseline | Production (F1r) | Δ |
 |---|---|---|---|
 | Prompt processing 8K / 192K | 445 / 386 t/s | **1745 / 1209 t/s** | **+292 % / +213 %** |
-| Generazione 8K / 32K / 192K | 31.4 / 28.5 / 28.9 t/s | **50.1 / 50.1 / 32.7 t/s** | **+60 % / +75 % / +13 %** |
+| Generation 8K / 32K / 192K | 31.4 / 28.5 / 28.9 t/s | **50.1 / 50.1 / 32.7 t/s** | **+60 % / +75 % / +13 %** |
 | TTFT 32K / 128K | 73.9 / 328.6 s | **18.4 / 93.9 s** | **−75 % / −71 %** |
-| Lavoro agentico | 6.7 task/min | **8.82 task/min** | **+32 %** |
-| Qualità (coding 10 prove) | 10/10 | **10/10** | invariata |
+| Agentic work | 6.7 task/min | **8.82 task/min** | **+32 %** |
+| Quality (10 coding tasks) | 10/10 | **10/10** | unchanged |
 
-Fonti: [`docs/RESULTS.md`](docs/RESULTS.md), [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md).
+Sources: [`docs/RESULTS.md`](docs/RESULTS.md), [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md).
 
-## Cosa dimostrano i test
+## What the tests demonstrate
 
-- **Il collo di bottiglia era il bus, non la GPU.** La baseline era satura su PCIe
-  Gen3 x16 (~12.7 GB/s): ogni ubatch grande deve trasferire gli esperti MoE dalla RAM.
-  Il calcolo della banda è in [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) §4.1.
-- **L'ubatch è la leva principale sul prompt processing.** 512 → 1024 → 2048 → 3072
-  vale circa +69 %, +71 % e +18…25 % per passo, finché la VRAM lo consente.
-- **La cache MoE danneggia la generazione.** Con cache a 1024 MiB la TG era 32.3 t/s;
-  con cache 0 è 42.2 t/s, perché ogni miss costa un trasferimento PCIe mentre la CPU
-  calcola gli esperti dalla DDR4 più in fretta.
-- **KV q8_0 non è una velocizzazione, è un abilitatore.** Libera 1.8 GiB di VRAM che
-  servono per l'ubatch più grande e per tenere 3 layer di esperti sulla GPU
-  (`--n-cpu-moe 37`), senza perdita di qualità misurata (needle 5/5, coding 10/10).
-- **Il disaccoppiamento dell'ubatch MTP libera 883 MiB** (`--spec-draft-n-ubatch 512`):
-  il buffer compute del contesto draft scende da 942 a 235 MiB al costo dell'1 % di PP.
-- **ReBAR non serve** (test A/B dedicato): non alza la banda Gen3 e riduce la VRAM
-  disponibile di ~300 MiB. Documentato in [`docs/RESULTS.md`](docs/RESULTS.md) §1.3.
+- **The bottleneck was the bus, not the GPU.** The baseline was saturated on PCIe
+  Gen3 x16 (~12.7 GB/s): every large ubatch must transfer the MoE experts from RAM.
+  The bandwidth calculation is in [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) §4.1.
+- **ubatch size is the main lever on prompt processing.** 512 → 1024 → 2048 → 3072
+  is worth about +69 %, +71 % and +18…25 % per step, as long as VRAM allows it.
+- **The MoE cache hurts generation.** With a 1024 MiB cache TG was 32.3 t/s;
+  with cache 0 it is 42.2 t/s, because every miss costs a PCIe transfer while the CPU
+  computes the experts from DDR4 faster.
+- **KV q8_0 is not a speedup, it is an enabler.** It frees 1.8 GiB of VRAM that
+  are needed for the larger ubatch and to keep 3 layers of experts on the GPU
+  (`--n-cpu-moe 37`), with no measured quality loss (needle 5/5, coding 10/10).
+- **Decoupling the MTP ubatch frees 883 MiB** (`--spec-draft-n-ubatch 512`):
+  the compute buffer of the draft context drops from 942 to 235 MiB at the cost of 1 % of PP.
+- **ReBAR is not needed** (dedicated A/B test): it does not raise Gen3 bandwidth and
+  reduces available VRAM by ~300 MiB. Documented in [`docs/RESULTS.md`](docs/RESULTS.md) §1.3.
 
-## Missione
+## Mission
 
-Trovare, con misure riproducibili e una variabile per volta, la configurazione
-migliore di `llama-server` per questo modello su questo hardware, **senza ridurre
-il contesto sotto 200 000 token** e senza degradare la qualità. Ogni decisione è
-presa secondo la regola §3.5 di [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md): un
-guadagno ≥ 5 % su PP o TG, oppure neutralità dichiarata; i peggioramenti sono
-scartati anche se "sembrano" ragionevoli.
+To find, with reproducible measurements and one variable at a time, the best
+`llama-server` configuration for this model on this hardware, **without reducing
+the context below 200 000 tokens** and without degrading quality. Every decision is
+made according to rule §3.5 of [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md): a
+gain ≥ 5 % on PP or TG, or declared neutrality; regressions are DISCARDED even
+if they "seem" reasonable.
 
-## Vincoli del laboratorio
+## Lab constraints
 
-- Un solo modello: `/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf`. **Mai** copiato,
-  convertito o modificato (mount read-only).
-- Contesto sempre ≥ 200 000: `--ctx-size 200000` → `n_ctx = 200192` verificato nei log.
-- Un solo server LLM alla volta (10 GB di VRAM), porte pubblicate **solo su
+- A single model: `/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf`. **Never** copied,
+  converted or modified (read-only mount).
+- Context always ≥ 200 000: `--ctx-size 200000` → `n_ctx = 200192` verified in the logs.
+- A single LLM server at a time (10 GB of VRAM), ports published **only on
   `127.0.0.1`**.
-- Sempre `bin/dk` al posto di `docker` (aggiunge il gruppo docker al processo).
-- Niente `sudo`, niente modifiche a governor/swap/zram/driver/BIOS. Le idee che
-  li richiedono sono solo proposte in [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) §6.
-- Il container originale `qwen36-35b` e l'immagine b11977 non vengono mai
-  cancellati; nessun `docker prune`, nessun pull dell'immagine `:server-cuda`
-  (si usa il digest pinnato).
+- Always `bin/dk` instead of `docker` (it adds the docker group to the process).
+- No `sudo`, no changes to governor/swap/zram/driver/BIOS. Ideas that require
+  them are only proposals in [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) §6.
+- The original container `qwen36-35b` and image b11977 are never deleted;
+  no `docker prune`, no pulling of the `:server-cuda` image
+  (the pinned digest is used).
 
-## Struttura della repo
+## Repository structure
 
 ```
 .
 ├── README.md
 ├── LICENSE
-├── docs/                  documentazione (metodo, dati, configurazione)
-│   ├── METHODOLOGY.md     piano operativo usato dall'agente esecutore
-│   ├── HARDWARE.md        hardware rilevato (CPU, PCIe, RAM, GPU, modello)
-│   ├── BASELINE.md        configurazione originale e baseline misurata
-│   ├── EXPERIMENTS.md     registro cronologico, una voce per esperimento
-│   ├── RESULTS.md         tabelle consolidate e confronti
-│   ├── OPTIMIZATION.md    configurazione finale, limiti, rollback, client
-│   └── PROGRESS.md        stato del lavoro e checklist
-├── bench/                 benchmark (solo standard library)
-│   ├── bench.py           PP / TG / TTFT / VRAM a profondità multiple
+├── docs/                  documentation (method, data, configuration)
+│   ├── METHODOLOGY.md     operating plan used by the executing agent
+│   ├── HARDWARE.md        detected hardware (CPU, PCIe, RAM, GPU, model)
+│   ├── BASELINE.md        original configuration and measured baseline
+│   ├── EXPERIMENTS.md     chronological log, one entry per experiment
+│   ├── RESULTS.md         consolidated tables and comparisons
+│   ├── OPTIMIZATION.md    final configuration, limits, rollback, clients
+│   └── PROGRESS.md        work status and checklist
+├── bench/                 benchmarks (standard library only)
+│   ├── bench.py           PP / TG / TTFT / VRAM at multiple depths
 │   ├── agentic.py         tool calling, multi-turn, coding, task/min
-│   ├── session.py         sessione lunga con riuso del prompt
-│   ├── needle.py          5 aghi a ~150K token
-│   ├── summarize.py       mediane dai JSONL → tabella + summary.csv
-│   └── corpus/            corpus usato dai test
+│   ├── session.py         long session with prompt reuse
+│   ├── needle.py          5 needles at ~150K tokens
+│   ├── summarize.py       medians from JSONL → table + summary.csv
+│   └── corpus/            corpus used by the tests
 ├── scripts/
-│   ├── exp.sh             esperimento completo: server → bench → stop → log
-│   ├── run_server.sh      server sperimentale isolato su 127.0.0.1:8081
-│   ├── queue.sh           esecuzione sequenziale di più esperimenti
-│   ├── prod_start.sh      avvio produzione qwen36-35b-opt su 127.0.0.1:8080
-│   ├── prod_stop.sh       arresto produzione (container preservato)
-│   └── check_repo.py      validazione dati e link (usata dalla CI)
-├── results/               dati grezzi JSONL + summary.csv (schema in results/README.md)
-├── logs/                  log grezzi dei server (evidenza; vedi logs/README.md)
-├── baseline/original/     inspect JSON del container originale e dell'immagine
-├── analysis/              metadati GGUF e script di ispezione
-└── bin/dk                 wrapper docker (newgrp docker)
+│   ├── exp.sh             full experiment: server → bench → stop → log
+│   ├── run_server.sh      isolated experimental server on 127.0.0.1:8081
+│   ├── queue.sh           sequential execution of several experiments
+│   ├── prod_start.sh      starts production qwen36-35b-opt on 127.0.0.1:8080
+│   ├── prod_stop.sh       stops production (container kept)
+│   └── check_repo.py      data and link validation (used by CI)
+├── results/               raw JSONL data + summary.csv (schema in results/README.md)
+├── logs/                  raw server logs (evidence; see logs/README.md)
+├── baseline/original/     inspect JSON of the original container and image
+├── analysis/              GGUF metadata and inspection scripts
+└── bin/dk                 docker wrapper (newgrp docker)
 ```
 
 ## Quick start
 
-Prerequisiti: Linux, Docker, NVIDIA Container Toolkit, una GPU con abbastanza VRAM
-(qui 10 GB) e il file GGUF scaricato **da te** (non è incluso nella repo).
+Prerequisites: Linux, Docker, NVIDIA Container Toolkit, a GPU with enough VRAM
+(here 10 GB) and the GGUF file downloaded **by you** (it is not included in the repo).
 
 ```bash
 git clone https://github.com/Korvaxoide/llama-cpp-moe-lab.git
@@ -119,10 +119,10 @@ cd llama-cpp-moe-lab
 mkdir -p ~/AI/llama-models && cp /percorso/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf ~/AI/llama-models/
 ```
 
-Poi, dalla radice:
+Then, from the root:
 
 ```bash
-# server sperimentale isolato su 127.0.0.1:8081 con la configurazione finale
+# isolated experimental server on 127.0.0.1:8081 with the final configuration
 scripts/run_server.sh llopt-exp -- \
   --ctx-size 200000 --n-predict -1 --n-gpu-layers auto \
   --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja \
@@ -139,8 +139,8 @@ python3 bench/summarize.py MIO_RUN
 bin/dk stop -t 60 llopt-exp && bin/dk rm llopt-exp
 ```
 
-In alternativa `scripts/exp.sh MIO_RUN 8192,32768,131072,196608 3 2 -- <flags>`
-fa tutto in un comando. I benchmark lunghi vanno lanciati in background:
+Alternatively `scripts/exp.sh MIO_RUN 8192,32768,131072,196608 3 2 -- <flags>`
+does everything in a single command. Long benchmarks must be started in the background:
 
 ```bash
 setsid nohup bash -c 'scripts/exp.sh MIO_RUN 8192,32768,131072,196608 3 2 -- <flags>' \
@@ -148,51 +148,54 @@ setsid nohup bash -c 'scripts/exp.sh MIO_RUN 8192,32768,131072,196608 3 2 -- <fl
 tail -3 logs/MIO_RUN.out
 ```
 
-## Produzione
+## Production
 
 ```bash
 scripts/prod_start.sh     # qwen36-35b-opt su http://127.0.0.1:8080
-scripts/prod_stop.sh      # arresta, container preservato
+scripts/prod_stop.sh      # stops it, container kept
 ```
 
-Rollback all'originale: `scripts/prod_stop.sh && bin/dk start qwen36-35b`
-(poi `bin/dk stop qwen36-35b && scripts/prod_start.sh` per tornare
-all'ottimizzato). Il rollback è stato provato in Fase 9. Non avviare mai i due
-container insieme: la VRAM non basta.
+Rollback to the original: `scripts/prod_stop.sh && bin/dk start qwen36-35b`
+(then `bin/dk stop qwen36-35b && scripts/prod_start.sh` to return
+to the optimized one). The rollback was tried in Phase 9. Never start the two
+containers together: the VRAM is not enough.
 
 Client (OpenCode, Cline, …): endpoint `http://127.0.0.1:8080/v1`,
-`context = 200000`, output ≥ 8192. Dettagli in [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) §8.
-Se la macchina si usa anche per giocare, vedi §9 (convivenza con desktop e gaming).
+`context = 200000`, output ≥ 8192. Details in [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) §8.
+If the machine is also used for gaming, see §9 (coexistence with desktop and gaming).
 
-## Dati e riproducibilità
+## Data and reproducibility
 
-Nessun numero in questo repository è inventato. Ogni tabella deriva da
-`results/*.jsonl` o da righe di `logs/exp/*`; le mediane sono generate con
-`python3 bench/summarize.py`, che riscrive anche `results/summary.csv`. Dove un
-valore è un calcolo derivato (es. banda PCIe) la formula è mostrata accanto.
-Lo schema dei file di dati è in [`results/README.md`](results/README.md); cosa
-contengono i log è in [`logs/README.md`](logs/README.md).
+No number in this repository is invented. Every table derives from
+`results/*.jsonl` or from lines of `logs/exp/*`; the medians are generated with
+`python3 bench/summarize.py`, which also rewrites `results/summary.csv`. Where a
+value is a derived calculation (e.g. PCIe bandwidth) the formula is shown next to it.
+The schema of the data files is in [`results/README.md`](results/README.md); what
+the logs contain is in [`logs/README.md`](logs/README.md).
 
-La CI verifica a ogni push che tutti i JSONL siano validi, che gli script Python
-compilino e che i link relativi dei documenti esistano
+On every push the CI checks that all JSONL files are valid, that the Python scripts
+compile and that the relative links in the documents exist
 (`python3 scripts/check_repo.py`).
 
-## Limiti
+## Limitations
 
-- I risultati valgono per **questo** hardware e **questo** runtime (RTX 3080 10 GB,
-  Ryzen 7 3700X, PCIe Gen3 x16, llama.cpp b11977, quel GGUF): sono un metodo e un
-  confronto, non una garanzia su altre macchine.
-- ubatch oltre 3072 e `--n-cpu-moe 36` non sono stati adottati per margine VRAM
-  insufficiente, non perché siano lenti.
-- Il needle test non è stato ripetuto sulla F1r: rispetto alla F1 cambiano solo
-  ubatch e buffer MTP, non la precisione della KV né i pesi.
-- Il "task/min" dipende dai task del benchmark, non è un indice assoluto.
+- The results apply to **this** hardware and **this** runtime (RTX 3080 10 GB,
+  Ryzen 7 3700X, PCIe Gen3 x16, llama.cpp b11977, that GGUF): they are a method and a
+  comparison, not a guarantee on other machines.
+- ubatch above 3072 and `--n-cpu-moe 36` were not adopted because of insufficient
+  VRAM margin, not because they are slow.
+- The needle test was not repeated on F1r: compared to F1 only the
+  ubatch and the MTP buffer change, not the KV precision or the weights.
+- The "task/min" depends on the benchmark tasks; it is not an absolute index.
 
-## Licenza e disclaimer
+## License and disclaimer
 
-Codice e documentazione: [MIT](LICENSE).
+Code and documentation: [MIT](LICENSE).
 
-I pesi del modello **non** sono distribuiti in questa repo: il GGUF resta fuori dal
-versionamento e viene montato in sola lettura. I path personali sono stati sostituiti
-con `$HOME` in vista della pubblicazione; i log sono riportati come prodotti dagli
-strumenti, con le sole sostituzioni dei path.
+The model weights are **not** distributed in this repo: the GGUF stays out of
+version control and is mounted read-only. Personal paths were replaced
+with `$HOME` ahead of publication; the logs are reported as produced by the
+tools, with only the path substitutions.
+
+The original Italian documentation of the first publication is preserved at tag
+[`v1.0.0`](https://github.com/Korvaxoide/llama-cpp-moe-lab/tree/v1.0.0).
