@@ -1,0 +1,26 @@
+== E46_ncmoe36 :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 36 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+984fd771bbe86aa996190d6a76f1147a21f63bcf34185a186c56044036c355b7
+READY after 13s
+   load_s=15
+[E46_ncmoe36] server n_ctx=200192
+{"tag": "E46_ncmoe36", "depth": 8192, "rep": 0, "gen": 512, "wall_s": 16.409, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1329.65, "prompt_ms": 6161.0, "predicted_n": 512, "tg_tps": 49.88, "draft_n": 357, "draft_acc": 332, "acc_rate": 0.93, "n_ctx": 200192, "ts": "2026-11-06T10:44:26", "vram_max": 9829, "util_avg": 43.4, "pcie_gen_max": 3, "power_avg": 162.9, "ram_avail_min": 13866, "swap_used_max": 325}
+{"tag": "E46_ncmoe36", "depth": 8192, "rep": 1, "gen": 512, "wall_s": 16.244, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1501.81, "prompt_ms": 5454.8, "predicted_n": 512, "tg_tps": 47.6, "draft_n": 377, "draft_acc": 322, "acc_rate": 0.8541, "n_ctx": 200192, "ts": "2026-11-06T10:44:43", "vram_max": 9829, "util_avg": 51.9, "pcie_gen_max": 3, "power_avg": 166.2, "ram_avail_min": 13554, "swap_used_max": 325}
+{"tag": "E46_ncmoe36", "depth": 8192, "rep": 2, "gen": 512, "wall_s": 16.153, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1502.22, "prompt_ms": 5453.3, "predicted_n": 512, "tg_tps": 47.99, "draft_n": 372, "draft_acc": 325, "acc_rate": 0.8737, "n_ctx": 200192, "ts": "2026-11-06T10:44:59", "vram_max": 9856, "util_avg": 43.5, "pcie_gen_max": 3, "power_avg": 164.9, "ram_avail_min": 13253, "swap_used_max": 325}
+{"tag": "E46_ncmoe36", "depth": 8192, "rep": 3, "gen": 512, "wall_s": 16.141, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1502.07, "prompt_ms": 5453.8, "predicted_n": 512, "tg_tps": 48.05, "draft_n": 374, "draft_acc": 324, "acc_rate": 0.8663, "n_ctx": 200192, "ts": "2026-11-06T10:45:15", "vram_max": 9835, "util_avg": 46.1, "pcie_gen_max": 3, "power_avg": 165.3, "ram_avail_min": 12952, "swap_used_max": 325}
+{"tag": "E46_ncmoe36", "depth": 32768, "rep": 0, "gen": 512, "wall_s": 33.071, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1450.82, "prompt_ms": 22585.9, "predicted_n": 512, "tg_tps": 49.01, "draft_n": 348, "draft_acc": 337, "acc_rate": 0.9684, "n_ctx": 200192, "ts": "2026-11-06T10:45:48", "vram_max": 9829, "util_avg": 77.6, "pcie_gen_max": 3, "power_avg": 200.1, "ram_avail_min": 12667, "swap_used_max": 325}
+{"tag": "E46_ncmoe36", "depth": 32768, "rep": 1, "gen": 512, "wall_s": 32.973, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1450.51, "prompt_ms": 22590.7, "predicted_n": 512, "tg_tps": 49.76, "draft_n": 342, "draft_acc": 339, "acc_rate": 0.9912, "n_ctx": 200192, "ts": "2026-11-06T10:46:21", "vram_max": 9829, "util_avg": 73.5, "pcie_gen_max": 3, "power_avg": 199.6, "ram_avail_min": 12061, "swap_used_max": 323}
+{"tag": "E46_ncmoe36", "depth": 32768, "rep": 2, "gen": 512, "wall_s": 33.004, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1450.4, "prompt_ms": 22592.4, "predicted_n": 512, "tg_tps": 49.64, "draft_n": 344, "draft_acc": 339, "acc_rate": 0.9855, "n_ctx": 200192, "ts": "2026-11-06T10:46:54", "vram_max": 9829, "util_avg": 74.7, "pcie_gen_max": 3, "power_avg": 201.1, "ram_avail_min": 11435, "swap_used_max": 323}
+{"tag": "E46_ncmoe36", "depth": 32768, "rep": 3, "gen": 512, "wall_s": 33.161, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1450.22, "prompt_ms": 22595.2, "predicted_n": 512, "tg_tps": 48.89, "draft_n": 345, "draft_acc": 338, "acc_rate": 0.9797, "n_ctx": 200192, "ts": "2026-11-06T10:47:27", "vram_max": 9829, "util_avg": 74.3, "pcie_gen_max": 3, "power_avg": 200.3, "ram_avail_min": 10861, "swap_used_max": 330}
+   0.05.985.292 I load_tensors:        CUDA0 model buffer size =  3877.70 MiB
+   0.05.985.293 I load_tensors:    CUDA_Host model buffer size = 12423.85 MiB
+   0.12.204.738 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.205.307 I llama_memory_recurrent:      CUDA0 RS buffer size =   188.44 MiB
+   0.12.558.575 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.12.558.578 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.12.693.338 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.022.934 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.022.939 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.13.467.740 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.467.745 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.17.745.266 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.17.745.271 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB

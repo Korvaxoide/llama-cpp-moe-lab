@@ -1,0 +1,2 @@
+scripts/exp.sh E20_kvq8_ub2048 8192,32768 3 1 -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048
+scripts/exp.sh E21_kvq8_ub4096 8192,32768 3 1 -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 4096 -ub 4096

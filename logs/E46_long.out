@@ -1,0 +1,19 @@
+== E46_ncmoe36_long :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 36 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+13b4f8949713b808b4c8e82e032257dbe6e11af5d41a8bb06f254c176fc06265
+READY after 13s
+   load_s=15
+[E46_ncmoe36_long] server n_ctx=200192
+{"tag": "E46_ncmoe36_long", "depth": 196608, "rep": 0, "gen": 256, "wall_s": 197.589, "prompt_n": 196608, "cache_n": 0, "pp_tps": 1036.74, "prompt_ms": 189639.8, "predicted_n": 256, "tg_tps": 32.38, "draft_n": 212, "draft_acc": 148, "acc_rate": 0.6981, "n_ctx": 200192, "ts": "2026-11-06T10:52:57", "vram_max": 9855, "util_avg": 95.0, "pcie_gen_max": 3, "power_avg": 253.8, "ram_avail_min": 13869, "swap_used_max": 356}
+   0.06.330.939 I load_tensors:        CUDA0 model buffer size =  3877.70 MiB
+   0.06.330.940 I load_tensors:    CUDA_Host model buffer size = 12423.85 MiB
+   0.12.615.172 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.615.643 I llama_memory_recurrent:      CUDA0 RS buffer size =   188.44 MiB
+   0.12.975.810 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.12.975.814 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.13.084.674 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.396.013 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.396.017 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.13.880.362 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.880.365 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.18.201.718 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.18.201.722 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB

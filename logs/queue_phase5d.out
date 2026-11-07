@@ -1,0 +1,61 @@
+### QUEUE START 11:18:07 :: GEN=512 scripts/exp.sh E53_nmax3_pmin05 8192,32768,131072 4 1 -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe --spec-draft-p-min 0.5 -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+== E53_nmax3_pmin05 :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe --spec-draft-p-min 0.5 -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+0d0d10db1f27664ab7127ee7f15d3d0ac959244d60f676fa78d7cd9fffbe92dc
+READY after 12s
+   load_s=15
+[E53_nmax3_pmin05] server n_ctx=200192
+{"tag": "E53_nmax3_pmin05", "depth": 8192, "rep": 0, "gen": 512, "wall_s": 17.531, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1314.41, "prompt_ms": 6232.4, "predicted_n": 512, "tg_tps": 45.25, "draft_n": 399, "draft_acc": 348, "acc_rate": 0.8722, "n_ctx": 200192, "ts": "2026-11-06T11:18:42", "vram_max": 9567, "util_avg": 48.7, "pcie_gen_max": 3, "power_avg": 159.8, "ram_avail_min": 13649, "swap_used_max": 492}
+{"tag": "E53_nmax3_pmin05", "depth": 8192, "rep": 1, "gen": 512, "wall_s": 16.795, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1470.13, "prompt_ms": 5572.3, "predicted_n": 512, "tg_tps": 45.75, "draft_n": 400, "draft_acc": 353, "acc_rate": 0.8825, "n_ctx": 200192, "ts": "2026-11-06T11:18:59", "vram_max": 9597, "util_avg": 45.3, "pcie_gen_max": 3, "power_avg": 164.1, "ram_avail_min": 13326, "swap_used_max": 492}
+{"tag": "E53_nmax3_pmin05", "depth": 8192, "rep": 2, "gen": 512, "wall_s": 16.401, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1475.78, "prompt_ms": 5551.0, "predicted_n": 512, "tg_tps": 47.34, "draft_n": 393, "draft_acc": 357, "acc_rate": 0.9084, "n_ctx": 200192, "ts": "2026-11-06T11:19:16", "vram_max": 9575, "util_avg": 50.1, "pcie_gen_max": 3, "power_avg": 164.0, "ram_avail_min": 13004, "swap_used_max": 492}
+{"tag": "E53_nmax3_pmin05", "depth": 8192, "rep": 3, "gen": 512, "wall_s": 16.535, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1476.94, "prompt_ms": 5546.6, "predicted_n": 512, "tg_tps": 46.73, "draft_n": 395, "draft_acc": 354, "acc_rate": 0.8962, "n_ctx": 200192, "ts": "2026-11-06T11:19:32", "vram_max": 9567, "util_avg": 49.3, "pcie_gen_max": 3, "power_avg": 165.0, "ram_avail_min": 12670, "swap_used_max": 492}
+{"tag": "E53_nmax3_pmin05", "depth": 32768, "rep": 0, "gen": 512, "wall_s": 33.136, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1427.75, "prompt_ms": 22950.8, "predicted_n": 512, "tg_tps": 50.48, "draft_n": 387, "draft_acc": 379, "acc_rate": 0.9793, "n_ctx": 200192, "ts": "2026-11-06T11:20:05", "vram_max": 9567, "util_avg": 74.6, "pcie_gen_max": 3, "power_avg": 199.8, "ram_avail_min": 12360, "swap_used_max": 492}
+{"tag": "E53_nmax3_pmin05", "depth": 32768, "rep": 1, "gen": 512, "wall_s": 33.383, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1426.58, "prompt_ms": 22969.6, "predicted_n": 512, "tg_tps": 49.62, "draft_n": 390, "draft_acc": 377, "acc_rate": 0.9667, "n_ctx": 200192, "ts": "2026-11-06T11:20:39", "vram_max": 9567, "util_avg": 75.6, "pcie_gen_max": 3, "power_avg": 200.4, "ram_avail_min": 11714, "swap_used_max": 493}
+{"tag": "E53_nmax3_pmin05", "depth": 32768, "rep": 2, "gen": 512, "wall_s": 33.275, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1429.16, "prompt_ms": 22928.2, "predicted_n": 512, "tg_tps": 49.99, "draft_n": 389, "draft_acc": 378, "acc_rate": 0.9717, "n_ctx": 200192, "ts": "2026-11-06T11:21:12", "vram_max": 9567, "util_avg": 74.8, "pcie_gen_max": 3, "power_avg": 198.7, "ram_avail_min": 11186, "swap_used_max": 494}
+{"tag": "E53_nmax3_pmin05", "depth": 32768, "rep": 3, "gen": 512, "wall_s": 33.331, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1428.38, "prompt_ms": 22940.7, "predicted_n": 512, "tg_tps": 49.78, "draft_n": 389, "draft_acc": 378, "acc_rate": 0.9717, "n_ctx": 200192, "ts": "2026-11-06T11:21:45", "vram_max": 9588, "util_avg": 75.5, "pcie_gen_max": 3, "power_avg": 198.7, "ram_avail_min": 10600, "swap_used_max": 497}
+{"tag": "E53_nmax3_pmin05", "depth": 131072, "rep": 0, "gen": 512, "wall_s": 125.188, "prompt_n": 131072, "cache_n": 0, "pp_tps": 1156.79, "prompt_ms": 113306.4, "predicted_n": 512, "tg_tps": 43.56, "draft_n": 400, "draft_acc": 373, "acc_rate": 0.9325, "n_ctx": 200192, "ts": "2026-11-06T11:23:50", "vram_max": 9589, "util_avg": 90.6, "pcie_gen_max": 3, "power_avg": 236.7, "ram_avail_min": 9819, "swap_used_max": 497}
+   0.06.395.413 I load_tensors:        CUDA0 model buffer size =  3545.70 MiB
+   0.06.395.414 I load_tensors:    CUDA_Host model buffer size = 12755.85 MiB
+   0.12.339.189 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.339.830 I llama_memory_recurrent:      CUDA0 RS buffer size =   251.25 MiB
+   0.12.700.565 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.12.700.569 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.12.838.816 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.178.878 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.178.882 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.13.638.645 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.638.649 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.17.374.367 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.17.374.371 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+### QUEUE END rc=0 11:23:53
+### gpu_now 516 MiB
+### QUEUE START 11:23:58 :: GEN=512 scripts/exp.sh E54_nmax3_nodraftmoe 8192,32768,131072 4 1 -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+== E54_nmax3_nodraftmoe :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+054a4afaea18c103d85efec59b22d1c5bb1e6397a2f707135f53a26b429b8dac
+READY after 12s
+   load_s=14
+[E54_nmax3_nodraftmoe] server n_ctx=200192
+{"tag": "E54_nmax3_nodraftmoe", "depth": 8192, "rep": 0, "gen": 512, "wall_s": 16.403, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1325.89, "prompt_ms": 6178.5, "predicted_n": 512, "tg_tps": 50.0, "draft_n": 406, "draft_acc": 375, "acc_rate": 0.9236, "n_ctx": 200192, "ts": "2026-11-06T11:24:32", "vram_max": 9588, "util_avg": 54.2, "pcie_gen_max": 3, "power_avg": 159.3, "ram_avail_min": 13589, "swap_used_max": 458}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 8192, "rep": 1, "gen": 512, "wall_s": 16.487, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1473.71, "prompt_ms": 5558.8, "predicted_n": 512, "tg_tps": 47.05, "draft_n": 435, "draft_acc": 365, "acc_rate": 0.8391, "n_ctx": 200192, "ts": "2026-11-06T11:24:48", "vram_max": 9588, "util_avg": 44.8, "pcie_gen_max": 3, "power_avg": 162.7, "ram_avail_min": 13323, "swap_used_max": 459}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 8192, "rep": 2, "gen": 512, "wall_s": 16.307, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1472.07, "prompt_ms": 5565.0, "predicted_n": 512, "tg_tps": 47.81, "draft_n": 429, "draft_acc": 367, "acc_rate": 0.8555, "n_ctx": 200192, "ts": "2026-11-06T11:25:05", "vram_max": 9588, "util_avg": 49.1, "pcie_gen_max": 3, "power_avg": 162.4, "ram_avail_min": 12998, "swap_used_max": 459}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 8192, "rep": 3, "gen": 512, "wall_s": 17.678, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1469.99, "prompt_ms": 5572.8, "predicted_n": 512, "tg_tps": 42.39, "draft_n": 477, "draft_acc": 351, "acc_rate": 0.7358, "n_ctx": 200192, "ts": "2026-11-06T11:25:22", "vram_max": 9588, "util_avg": 50.3, "pcie_gen_max": 3, "power_avg": 160.5, "ram_avail_min": 12729, "swap_used_max": 459}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 32768, "rep": 0, "gen": 512, "wall_s": 33.167, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1423.72, "prompt_ms": 23015.8, "predicted_n": 512, "tg_tps": 50.64, "draft_n": 387, "draft_acc": 381, "acc_rate": 0.9845, "n_ctx": 200192, "ts": "2026-11-06T11:25:55", "vram_max": 9588, "util_avg": 74.0, "pcie_gen_max": 3, "power_avg": 197.9, "ram_avail_min": 12432, "swap_used_max": 458}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 32768, "rep": 1, "gen": 512, "wall_s": 33.368, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1425.17, "prompt_ms": 22992.4, "predicted_n": 512, "tg_tps": 49.82, "draft_n": 393, "draft_acc": 379, "acc_rate": 0.9644, "n_ctx": 200192, "ts": "2026-11-06T11:26:29", "vram_max": 9588, "util_avg": 75.2, "pcie_gen_max": 3, "power_avg": 198.5, "ram_avail_min": 11807, "swap_used_max": 458}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 32768, "rep": 2, "gen": 512, "wall_s": 33.494, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1424.38, "prompt_ms": 23005.2, "predicted_n": 512, "tg_tps": 49.27, "draft_n": 394, "draft_acc": 379, "acc_rate": 0.9619, "n_ctx": 200192, "ts": "2026-11-06T11:27:02", "vram_max": 9596, "util_avg": 75.6, "pcie_gen_max": 3, "power_avg": 198.9, "ram_avail_min": 11184, "swap_used_max": 458}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 32768, "rep": 3, "gen": 512, "wall_s": 33.374, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1425.63, "prompt_ms": 22984.9, "predicted_n": 512, "tg_tps": 49.73, "draft_n": 396, "draft_acc": 378, "acc_rate": 0.9545, "n_ctx": 200192, "ts": "2026-11-06T11:27:36", "vram_max": 9574, "util_avg": 74.1, "pcie_gen_max": 3, "power_avg": 199.2, "ram_avail_min": 10581, "swap_used_max": 458}
+{"tag": "E54_nmax3_nodraftmoe", "depth": 131072, "rep": 0, "gen": 512, "wall_s": 125.749, "prompt_n": 131072, "cache_n": 0, "pp_tps": 1156.02, "prompt_ms": 113381.6, "predicted_n": 512, "tg_tps": 41.83, "draft_n": 422, "draft_acc": 370, "acc_rate": 0.8768, "n_ctx": 200192, "ts": "2026-11-06T11:29:41", "vram_max": 9567, "util_avg": 91.0, "pcie_gen_max": 3, "power_avg": 236.2, "ram_avail_min": 9960, "swap_used_max": 458}
+   0.06.233.022 I load_tensors:        CUDA0 model buffer size =  3545.70 MiB
+   0.06.233.023 I load_tensors:    CUDA_Host model buffer size = 12755.85 MiB
+   0.11.671.526 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.11.672.214 I llama_memory_recurrent:      CUDA0 RS buffer size =   251.25 MiB
+   0.12.037.187 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.12.037.191 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.12.162.883 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.12.499.416 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.12.499.421 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.12.955.840 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.12.955.843 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.17.127.023 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.17.127.026 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+### QUEUE END rc=0 11:29:44
+### gpu_now 496 MiB
+### QUEUE DONE 11:29:49

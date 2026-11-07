@@ -1,0 +1,34 @@
+server-cuda-b12124: Pulling from ggml-org/llama.cpp
+4f4fb700ef54: Pulling fs layer
+ef341f228335: Pulling fs layer
+7209097bfb98: Pulling fs layer
+70fec834b6b6: Pulling fs layer
+76d6fc763396: Pulling fs layer
+5a7813e071bf: Pulling fs layer
+a102f36d092c: Pulling fs layer
+05ec76e31584: Pulling fs layer
+398182656c47: Pulling fs layer
+73389fbd088f: Pulling fs layer
+545a3ada5b6b: Pulling fs layer
+3d6ab8c799cd: Pulling fs layer
+cbb9175a9bc5: Pulling fs layer
+a102f36d092c: Already exists
+398182656c47: Already exists
+73389fbd088f: Already exists
+545a3ada5b6b: Already exists
+cbb9175a9bc5: Already exists
+4f4fb700ef54: Already exists
+5a7813e071bf: Already exists
+05ec76e31584: Already exists
+3d6ab8c799cd: Already exists
+7209097bfb98: Already exists
+4f4fb700ef54: Pull complete
+76d6fc763396: Download complete
+70fec834b6b6: Download complete
+ef341f228335: Download complete
+ef341f228335: Pull complete
+76d6fc763396: Pull complete
+70fec834b6b6: Pull complete
+Digest: sha256:821d0ae4e5d4e82a2ad8d08973b5f9cd5d0b84524b1d2439ed1f3e41ebc6b4c7
+Status: Downloaded newer image for ghcr.io/ggml-org/llama.cpp:server-cuda-b12124
+ghcr.io/ggml-org/llama.cpp:server-cuda-b12124

@@ -1,0 +1,3 @@
+#!/bin/bash
+# docker wrapper: the OpenCode service process does not inherit the docker group, newgrp adds it
+printf '%q ' docker "$@" | newgrp docker

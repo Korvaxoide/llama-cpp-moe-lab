@@ -1,0 +1,11 @@
+# Clone esterno di llama.cpp: repository Git separato, pinnato a b11977.
+# Non fa parte del lavoro del laboratorio e pesa ~255 MB.
+/src/llama.cpp/
+
+# Python
+__pycache__/
+*.pyc
+
+# File temporanei / editor
+*.swp
+*.tmp

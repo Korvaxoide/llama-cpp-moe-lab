@@ -1,0 +1,50 @@
+### QUEUE START 11:50:45 :: GEN=512 scripts/exp.sh E70_b12124 8192,32768,131072 4 1 --image ghcr.io/ggml-org/llama.cpp:server-cuda-b12124 -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+== E70_b12124 :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none
+782177f684b6286bb7d7a06df32fa2395d91dd2828185c7784b6885bc03bf5ea
+READY after 12s
+   load_s=14
+[E70_b12124] server n_ctx=200192
+{"tag": "E70_b12124", "depth": 8192, "rep": 0, "gen": 512, "wall_s": 17.433, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1302.22, "prompt_ms": 6290.8, "predicted_n": 512, "tg_tps": 45.88, "draft_n": 444, "draft_acc": 363, "acc_rate": 0.8176, "n_ctx": 200192, "ts": "2026-11-06T11:51:19", "vram_max": 9590, "util_avg": 43.6, "pcie_gen_max": 3, "power_avg": 158.7, "ram_avail_min": 13434, "swap_used_max": 421}
+{"tag": "E70_b12124", "depth": 8192, "rep": 1, "gen": 512, "wall_s": 17.473, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1469.77, "prompt_ms": 5573.7, "predicted_n": 512, "tg_tps": 43.29, "draft_n": 484, "draft_acc": 349, "acc_rate": 0.7211, "n_ctx": 200192, "ts": "2026-11-06T11:51:37", "vram_max": 9616, "util_avg": 49.9, "pcie_gen_max": 3, "power_avg": 161.8, "ram_avail_min": 13130, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 8192, "rep": 2, "gen": 512, "wall_s": 16.057, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1469.66, "prompt_ms": 5574.1, "predicted_n": 512, "tg_tps": 49.0, "draft_n": 410, "draft_acc": 374, "acc_rate": 0.9122, "n_ctx": 200192, "ts": "2026-11-06T11:51:53", "vram_max": 9619, "util_avg": 45.7, "pcie_gen_max": 3, "power_avg": 162.9, "ram_avail_min": 12841, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 8192, "rep": 3, "gen": 512, "wall_s": 17.55, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1471.31, "prompt_ms": 5567.8, "predicted_n": 512, "tg_tps": 42.89, "draft_n": 484, "draft_acc": 349, "acc_rate": 0.7211, "n_ctx": 200192, "ts": "2026-11-06T11:52:10", "vram_max": 9590, "util_avg": 43.3, "pcie_gen_max": 3, "power_avg": 160.2, "ram_avail_min": 12560, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 32768, "rep": 0, "gen": 512, "wall_s": 33.422, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1421.22, "prompt_ms": 23056.2, "predicted_n": 512, "tg_tps": 49.6, "draft_n": 394, "draft_acc": 379, "acc_rate": 0.9619, "n_ctx": 200192, "ts": "2026-11-06T11:52:44", "vram_max": 9590, "util_avg": 74.2, "pcie_gen_max": 3, "power_avg": 196.5, "ram_avail_min": 12257, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 32768, "rep": 1, "gen": 512, "wall_s": 33.534, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1421.52, "prompt_ms": 23051.3, "predicted_n": 512, "tg_tps": 49.36, "draft_n": 399, "draft_acc": 377, "acc_rate": 0.9449, "n_ctx": 200192, "ts": "2026-11-06T11:53:17", "vram_max": 9590, "util_avg": 76.9, "pcie_gen_max": 3, "power_avg": 197.2, "ram_avail_min": 11643, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 32768, "rep": 2, "gen": 512, "wall_s": 33.538, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1421.06, "prompt_ms": 23058.9, "predicted_n": 512, "tg_tps": 49.5, "draft_n": 397, "draft_acc": 378, "acc_rate": 0.9521, "n_ctx": 200192, "ts": "2026-11-06T11:53:51", "vram_max": 9590, "util_avg": 74.8, "pcie_gen_max": 3, "power_avg": 197.3, "ram_avail_min": 11058, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 32768, "rep": 3, "gen": 512, "wall_s": 33.44, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1419.86, "prompt_ms": 23078.3, "predicted_n": 512, "tg_tps": 50.02, "draft_n": 394, "draft_acc": 379, "acc_rate": 0.9619, "n_ctx": 200192, "ts": "2026-11-06T11:54:24", "vram_max": 9590, "util_avg": 74.3, "pcie_gen_max": 3, "power_avg": 196.8, "ram_avail_min": 10442, "swap_used_max": 420}
+{"tag": "E70_b12124", "depth": 131072, "rep": 0, "gen": 512, "wall_s": 125.206, "prompt_n": 131072, "cache_n": 0, "pp_tps": 1152.41, "prompt_ms": 113737.1, "predicted_n": 512, "tg_tps": 45.31, "draft_n": 390, "draft_acc": 381, "acc_rate": 0.9769, "n_ctx": 200192, "ts": "2026-11-06T11:56:29", "vram_max": 9590, "util_avg": 91.9, "pcie_gen_max": 3, "power_avg": 235.9, "ram_avail_min": 9814, "swap_used_max": 420}
+   0.06.327.196 I load_tensors:        CUDA0 model buffer size =  3545.70 MiB
+   0.06.327.197 I load_tensors:    CUDA_Host model buffer size = 12755.85 MiB
+   0.11.264.746 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.11.265.880 I llama_memory_recurrent:      CUDA0 RS buffer size =   251.25 MiB
+   0.11.620.969 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.11.620.973 I sched_reserve:  CUDA_Host compute buffer size =   846.09 MiB
+   0.11.733.998 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.12.042.229 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.12.042.232 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.12.479.268 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.12.479.272 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.17.118.708 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.17.118.712 I sched_reserve:  CUDA_Host compute buffer size =   846.09 MiB
+### QUEUE END rc=0 11:56:33
+### gpu_now 495 MiB
+### QUEUE START 11:56:38 :: scripts/run_server.sh llopt-agent --image ghcr.io/ggml-org/llama.cpp:server-cuda-b12124 -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --n-cpu-moe 37 --moe-cache-mib 0 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none -lv 4 && python3 bench/agentic.py --tag E70_agentic --coding-reps 2 ; bin/dk stop -t 60 llopt-agent >/dev/null; bin/dk logs llopt-agent > logs/exp/E70_agentic_server.log 2>&1; bin/dk rm llopt-agent >/dev/null
+c258d329466d2cb6e6d0db135a043afaf56d9d4e8e665f37ff80408d8ed098c8
+READY after 12s
+{"test": "tool_call", "ok": true, "finish": "tool_calls", "wall": 3.64, "has_reasoning": true, "tool_calls": [{"type": "function", "function": {"name": "read_file", "arguments": "{\"path\":\"src/util.py\"}"}, "id": "uFrSNRn3ZT06OYMe37qm2PSjRWXUTP4O"}], "usage": {"completion_tokens": 72, "prompt_tokens": 392, "total_tokens": 464, "prompt_tokens_details": {"cached_tokens": 0}}, "tag": "E70_agentic", "ts": "2026-11-06T11:56:55"}
+{"test": "tool_call_stream", "ok": true, "finish": "tool_calls", "ttft": 0.09, "wall": 2.37, "has_reasoning": true, "tool_calls": [{"name": "read_file", "arguments": "{\"path\":\"src/util.py\"}"}], "usage": {"completion_tokens": 102, "prompt_tokens": 392, "total_tokens": 494, "prompt_tokens_details": {"cached_tokens": 388}}, "tag": "E70_agentic", "ts": "2026-11-06T11:56:58"}
+{"test": "multi_turn", "ok": true, "finish": "stop", "ttft": 0.73, "wall": 4.08, "cache_n": 388, "prompt_n": 100, "answer": "The function `compute_checksum` returns a **CRC32 checksum** of the input `data` (bytes), formatted as **8 lowercase hexadecimal digits**.\n\nIt does this by:\n1. Computing the CRC32 of the input data using `zlib.crc32(data)`\n2. Masking the result with `0xFFFFFFFF` to ensure it's a 32-bit unsigned valu", "tag": "E70_agentic", "ts": "2026-11-06T11:57:02"}
+{"test": "code_merge_intervals", "rep": 0, "ok": true, "err": null, "wall": 2.77, "ttft": 0.7, "gen_tokens": 106, "tg_tps": 50.78, "draft_acc": 0.9166666666666666, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:05"}
+{"test": "code_lru_cache", "rep": 0, "ok": true, "err": null, "wall": 3.95, "ttft": 0.67, "gen_tokens": 168, "tg_tps": 50.93, "draft_acc": 0.9111111111111111, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:09"}
+{"test": "code_parse_duration", "rep": 0, "ok": true, "err": null, "wall": 12.48, "ttft": 0.65, "gen_tokens": 557, "tg_tps": 47.0, "draft_acc": 0.7898989898989899, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:21"}
+{"test": "code_topo_sort", "rep": 0, "ok": true, "err": null, "wall": 10.14, "ttft": 0.63, "gen_tokens": 440, "tg_tps": 46.18, "draft_acc": 0.7752525252525253, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:31"}
+{"test": "code_rle", "rep": 0, "ok": true, "err": null, "wall": 6.5, "ttft": 0.7, "gen_tokens": 290, "tg_tps": 49.79, "draft_acc": 0.8708333333333333, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:38"}
+{"test": "code_merge_intervals", "rep": 1, "ok": true, "err": null, "wall": 2.72, "ttft": 0.12, "gen_tokens": 135, "tg_tps": 51.55, "draft_acc": 0.9074074074074074, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:40"}
+{"test": "code_lru_cache", "rep": 1, "ok": true, "err": null, "wall": 3.35, "ttft": 0.12, "gen_tokens": 168, "tg_tps": 51.7, "draft_acc": 0.9037037037037037, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:44"}
+{"test": "code_parse_duration", "rep": 1, "ok": true, "err": null, "wall": 10.11, "ttft": 0.65, "gen_tokens": 445, "tg_tps": 46.94, "draft_acc": 0.7964376590330788, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:57:54"}
+{"test": "code_topo_sort", "rep": 1, "ok": true, "err": null, "wall": 10.45, "ttft": 0.63, "gen_tokens": 460, "tg_tps": 46.76, "draft_acc": 0.7916666666666666, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:58:04"}
+{"test": "code_rle", "rep": 1, "ok": true, "err": null, "wall": 5.45, "ttft": 0.69, "gen_tokens": 250, "tg_tps": 52.38, "draft_acc": 0.9292929292929293, "finish": "stop", "tag": "E70_agentic", "ts": "2026-11-06T11:58:10"}
+{"test": "SUMMARY", "tool_call": true, "tool_call_stream": true, "coding_pass": "10/10", "coding_wall_s": 67.9, "coding_tokens": 3019, "tasks_per_min": 8.83, "tag": "E70_agentic", "ts": "2026-11-06T11:58:10"}
+### QUEUE END rc=0 11:58:12
+### gpu_now 495 MiB
+### QUEUE DONE 11:58:17

@@ -1,0 +1,21 @@
+== E20_kvq8_ub2048_long :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048
+33b46de6c9b1aca2a5cc9b1c2662cfa97d047220b14a701e21b44b8577b7e7c9
+READY after 5s
+   load_s=5
+[E20_kvq8_ub2048_long] server n_ctx=200192
+{"tag": "E20_kvq8_ub2048_long", "depth": 196608, "rep": 0, "gen": 256, "wall_s": 221.348, "prompt_n": 196608, "cache_n": 0, "pp_tps": 931.92, "prompt_ms": 210970.5, "predicted_n": 256, "tg_tps": 24.75, "draft_n": 210, "draft_acc": 149, "acc_rate": 0.7095, "n_ctx": 200192, "ts": "2026-11-06T09:36:00", "vram_max": 8917, "util_avg": 90.6, "pcie_gen_max": 3, "power_avg": 242.0, "ram_avail_min": 26146, "swap_used_max": 5}
+   0.02.058.647 I load_tensors:        CUDA0 model buffer size =  1961.70 MiB
+   0.02.266.254 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.02.266.715 I llama_memory_recurrent:      CUDA0 RS buffer size =   188.44 MiB
+   0.02.272.173 I impl:      CUDA0 MoE cache size =  1019.49 MiB for 13942.00 MiB of host experts
+   0.02.590.636 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.02.590.640 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.02.739.924 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.03.045.127 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.03.045.131 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.03.513.341 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.03.513.345 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.07.832.411 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.07.832.415 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   3.49.002.285 I llama_moe_cache: ubatch <= 8: hits = 16337, misses = 56087, hit rate = 22.56%, uploaded = 73467.55 MiB
+   3.49.002.289 I llama_moe_cache: large batches: 170148 experts copied from the cache, 74809.03 MiB

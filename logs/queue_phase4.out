@@ -1,0 +1,46 @@
+### QUEUE START 09:46:46 :: scripts/exp.sh E31_loadnone_mlock 8192,32768 3 1 --docker "--ulimit memlock=-1:-1" -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode mlock
+== E31_loadnone_mlock :: --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode mlock
+5b08d1d03e406dbcb7b708bac32d7f601f21b7f1c93a019e93efe5014b664ae4
+READY after 13s
+   load_s=16
+[E31_loadnone_mlock] server n_ctx=200192
+{"tag": "E31_loadnone_mlock", "depth": 8192, "rep": 0, "gen": 256, "wall_s": 15.359, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1241.53, "prompt_ms": 6598.3, "predicted_n": 256, "tg_tps": 29.12, "draft_n": 186, "draft_acc": 161, "acc_rate": 0.8656, "n_ctx": 200192, "ts": "2026-11-06T09:47:20", "vram_max": 8926, "util_avg": 88.0, "pcie_gen_max": 3, "power_avg": 179.0, "ram_avail_min": 11698, "swap_used_max": 33}
+{"tag": "E31_loadnone_mlock", "depth": 8192, "rep": 1, "gen": 256, "wall_s": 13.888, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1393.18, "prompt_ms": 5880.1, "predicted_n": 256, "tg_tps": 32.09, "draft_n": 190, "draft_acc": 160, "acc_rate": 0.8421, "n_ctx": 200192, "ts": "2026-11-06T09:47:34", "vram_max": 8932, "util_avg": 95.1, "pcie_gen_max": 3, "power_avg": 189.5, "ram_avail_min": 11368, "swap_used_max": 33}
+{"tag": "E31_loadnone_mlock", "depth": 8192, "rep": 2, "gen": 256, "wall_s": 14.093, "prompt_n": 8192, "cache_n": 0, "pp_tps": 1394.54, "prompt_ms": 5874.3, "predicted_n": 256, "tg_tps": 31.23, "draft_n": 194, "draft_acc": 157, "acc_rate": 0.8093, "n_ctx": 200192, "ts": "2026-11-06T09:47:48", "vram_max": 8931, "util_avg": 95.3, "pcie_gen_max": 3, "power_avg": 189.0, "ram_avail_min": 11096, "swap_used_max": 33}
+{"tag": "E31_loadnone_mlock", "depth": 32768, "rep": 0, "gen": 256, "wall_s": 33.361, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1348.92, "prompt_ms": 24292.1, "predicted_n": 256, "tg_tps": 28.32, "draft_n": 174, "draft_acc": 167, "acc_rate": 0.9598, "n_ctx": 200192, "ts": "2026-11-06T09:48:22", "vram_max": 8933, "util_avg": 94.4, "pcie_gen_max": 3, "power_avg": 209.3, "ram_avail_min": 10773, "swap_used_max": 33}
+{"tag": "E31_loadnone_mlock", "depth": 32768, "rep": 1, "gen": 256, "wall_s": 33.309, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1348.26, "prompt_ms": 24304.0, "predicted_n": 256, "tg_tps": 28.95, "draft_n": 172, "draft_acc": 169, "acc_rate": 0.9826, "n_ctx": 200192, "ts": "2026-11-06T09:48:55", "vram_max": 8926, "util_avg": 94.6, "pcie_gen_max": 3, "power_avg": 209.3, "ram_avail_min": 10237, "swap_used_max": 75}
+{"tag": "E31_loadnone_mlock", "depth": 32768, "rep": 2, "gen": 256, "wall_s": 33.362, "prompt_n": 32768, "cache_n": 0, "pp_tps": 1348.58, "prompt_ms": 24298.2, "predicted_n": 256, "tg_tps": 28.75, "draft_n": 173, "draft_acc": 168, "acc_rate": 0.9711, "n_ctx": 200192, "ts": "2026-11-06T09:49:28", "vram_max": 8926, "util_avg": 96.1, "pcie_gen_max": 3, "power_avg": 209.4, "ram_avail_min": 9624, "swap_used_max": 106}
+   0.07.544.738 I load_tensors:        CUDA0 model buffer size =  1961.70 MiB
+   0.07.544.739 I load_tensors:    CUDA_Host model buffer size = 14339.85 MiB
+   0.12.936.827 I llama_kv_cache:      CUDA0 KV buffer size =  2077.19 MiB
+   0.12.937.406 I llama_memory_recurrent:      CUDA0 RS buffer size =   188.44 MiB
+   0.12.943.721 I impl:      CUDA0 MoE cache size =  1019.49 MiB for 13942.00 MiB of host experts
+   0.13.301.101 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.13.301.105 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   0.13.450.014 I llama_kv_cache:      CUDA0 KV buffer size =   391.00 MiB
+   0.13.763.462 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.13.763.465 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.14.201.395 I sched_reserve:      CUDA0 compute buffer size =   942.06 MiB
+   0.14.201.399 I sched_reserve:  CUDA_Host compute buffer size =   814.07 MiB
+   0.18.460.574 I sched_reserve:      CUDA0 compute buffer size =  1437.02 MiB
+   0.18.460.578 I sched_reserve:  CUDA_Host compute buffer size =   846.36 MiB
+   2.41.679.067 I llama_moe_cache: ubatch <= 8: hits = 59868, misses = 365799, hit rate = 14.06%, uploaded = 479085.28 MiB
+   2.41.679.070 I llama_moe_cache: large batches: 131112 experts copied from the cache, 57840.45 MiB
+### QUEUE END rc=0 09:49:32
+### gpu_now 478 MiB
+### QUEUE START 09:49:37 :: scripts/run_server.sh llopt-agent -- --ctx-size 200000 --n-predict -1 --n-gpu-layers auto --cpu-moe --moe-cache-mib 1024 --flash-attn on --parallel 1 --jinja --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-cpu-moe -ctk q8_0 -ctv q8_0 -b 2048 -ub 2048 --load-mode none -lv 4 && python3 bench/session.py --tag E30_session_none --target 60000 --chunk 6000 ; bin/dk stop -t 60 llopt-agent >/dev/null; bin/dk logs llopt-agent > logs/exp/E30_session_none_server.log 2>&1; bin/dk rm llopt-agent >/dev/null
+2ccc9fd513e7c0bac03f53b5878f9671d23c6f2001faf67dd714dfd0a968c873
+READY after 13s
+{"tag": "E30_session_none", "turn": 0, "ctx_tokens": 6623, "cache_n": 0, "prompt_n": 6548, "pp_tps": 986.5, "ttft": 6.65, "gen": 75, "tg_tps": 28.09, "acc": 0.733, "wall": 9.29, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_adapter_cvec::tensor_for` 2. `llama_adapter_lora_init` 3. `llama_adapter_lora_free`  The file implements adapter"}
+{"tag": "E30_session_none", "turn": 1, "ctx_tokens": 12780, "cache_n": 6622, "prompt_n": 6083, "pp_tps": 1264.5, "ttft": 4.84, "gen": 75, "tg_tps": 31.47, "acc": 1.0, "wall": 7.19, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_adapter_cvec::tensor_for` 2. `llama_adapter_lora_init` 3. `llama_adapter_lora_free`  The file implements adapter"}
+{"tag": "E30_session_none", "turn": 2, "ctx_tokens": 18938, "cache_n": 12780, "prompt_n": 6083, "pp_tps": 1171.4, "ttft": 5.23, "gen": 75, "tg_tps": 30.6, "acc": 1.0, "wall": 7.65, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_adapter_cvec::tensor_for` 2. `llama_adapter_lora_init` 3. `llama_adapter_lora_free`  The file implements adapter"}
+{"tag": "E30_session_none", "turn": 3, "ctx_tokens": 25096, "cache_n": 18938, "prompt_n": 6083, "pp_tps": 1180.4, "ttft": 5.21, "gen": 75, "tg_tps": 30.18, "acc": 1.0, "wall": 7.66, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_adapter_cvec::tensor_for` 2. `llama_adapter_lora_init` 3. `llama_adapter_lora_free`  The file implements adapter"}
+{"tag": "E30_session_none", "turn": 4, "ctx_tokens": 31254, "cache_n": 25096, "prompt_n": 6083, "pp_tps": 1149.4, "ttft": 5.35, "gen": 75, "tg_tps": 29.92, "acc": 1.0, "wall": 7.82, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_adapter_cvec::tensor_for` 2. `llama_adapter_lora_init` 3. `llama_adapter_lora_free`  The file implements adapter"}
+{"tag": "E30_session_none", "turn": 5, "ctx_tokens": 37408, "cache_n": 31254, "prompt_n": 6082, "pp_tps": 1111.1, "ttft": 5.54, "gen": 72, "tg_tps": 30.31, "acc": 0.885, "wall": 7.89, "finish": "stop", "answer": "Three functions defined in the file:  1. `llm_arch_all()` 2. `llm_arch_name(llm_arch arch)` 3. `llm_arch_from_string(const std::string & name)`  The file define"}
+{"tag": "E30_session_none", "turn": 6, "ctx_tokens": 43561, "cache_n": 37408, "prompt_n": 6082, "pp_tps": 1091.7, "ttft": 5.64, "gen": 71, "tg_tps": 28.14, "acc": 0.796, "wall": 8.13, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_batch_allocr::init` 2. `llama_batch_allocr::ubatch_reserve` 3. `llama_batch_allocr::split_simple`  The file impl"}
+{"tag": "E30_session_none", "turn": 7, "ctx_tokens": 49711, "cache_n": 43560, "prompt_n": 6083, "pp_tps": 1068.0, "ttft": 5.79, "gen": 68, "tg_tps": 30.04, "acc": 0.917, "wall": 8.02, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_batch_allocr::split_seq` 2. `llama_batch_allocr::ubatch_add` 3. `llama_batch_init`  The file implements batch pr"}
+{"tag": "E30_session_none", "turn": 8, "ctx_tokens": 55854, "cache_n": 49711, "prompt_n": 6083, "pp_tps": 1045.1, "ttft": 5.91, "gen": 60, "tg_tps": 27.68, "acc": 0.729, "wall": 8.05, "finish": "stop", "answer": "Three functions defined in the file:  1. `llama_batch_ext::set_token_pos` 2. `llama_batch_init` 3. `llm_chat_apply_template`  The file implements batch processi"}
+{"tag": "E30_session_none", "SUMMARY": true, "turns": 9, "total_wall_s": 71.7}
+### QUEUE END rc=0 09:51:06
+### gpu_now 492 MiB
+### QUEUE DONE 09:51:11

@@ -1,0 +1,320 @@
+[
+    {
+        "Id": "bc1358beb494cb883a77701c28a20d5478d5d928894be75749c8ecbc3553326c",
+        "Created": "2026-11-05T17:52:59.054598699Z",
+        "Path": "/app/llama-server",
+        "Args": [
+            "-m",
+            "/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8080",
+            "--ctx-size",
+            "200000",
+            "--n-predict",
+            "-1",
+            "--n-gpu-layers",
+            "auto",
+            "--cpu-moe",
+            "--moe-cache-mib",
+            "1024",
+            "--flash-attn",
+            "on",
+            "--parallel",
+            "1",
+            "--jinja",
+            "--spec-type",
+            "draft-mtp",
+            "--spec-draft-n-max",
+            "2",
+            "--spec-draft-cpu-moe"
+        ],
+        "State": {
+            "Status": "exited",
+            "Running": false,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 0,
+            "ExitCode": 255,
+            "Error": "",
+            "StartedAt": "2026-11-05T17:52:59.185426123Z",
+            "FinishedAt": "2026-11-05T20:04:54.96456186Z",
+            "Health": {
+                "Status": "starting",
+                "FailingStreak": 0,
+                "Log": []
+            }
+        },
+        "Image": "sha256:0283744a35a6e7698b4f7a2d63360233dc769ece51e84bdba7aa187a33978276",
+        "ResolvConfPath": "/var/lib/docker/containers/bc1358beb494cb883a77701c28a20d5478d5d928894be75749c8ecbc3553326c/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/bc1358beb494cb883a77701c28a20d5478d5d928894be75749c8ecbc3553326c/hostname",
+        "HostsPath": "/var/lib/docker/containers/bc1358beb494cb883a77701c28a20d5478d5d928894be75749c8ecbc3553326c/hosts",
+        "LogPath": "/var/lib/docker/containers/bc1358beb494cb883a77701c28a20d5478d5d928894be75749c8ecbc3553326c/bc1358beb494cb883a77701c28a20d5478d5d928894be75749c8ecbc3553326c-json.log",
+        "Name": "/qwen36-35b",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/luca/AI/llama-models:/models:ro"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "bridge",
+            "PortBindings": {
+                "8080/tcp": [
+                    {
+                        "HostIp": "127.0.0.1",
+                        "HostPort": "8080"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                86,
+                43
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": [],
+            "BlkioDeviceWriteBps": [],
+            "BlkioDeviceReadIOps": [],
+            "BlkioDeviceWriteIOps": [],
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": [
+                {
+                    "Driver": "",
+                    "Count": -1,
+                    "DeviceIDs": null,
+                    "Capabilities": [
+                        [
+                            "gpu"
+                        ]
+                    ],
+                    "Options": {}
+                }
+            ],
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/luca/AI/llama-models",
+                "Destination": "/models",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "bc1358beb494",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NVARCH=x86_64",
+                "NVIDIA_REQUIRE_CUDA=cuda>=12.8 brand=unknown,driver>=470,driver<471 brand=grid,driver>=470,driver<471 brand=tesla,driver>=470,driver<471 brand=nvidia,driver>=470,driver<471 brand=quadro,driver>=470,driver<471 brand=quadrortx,driver>=470,driver<471 brand=nvidiartx,driver>=470,driver<471 brand=vapps,driver>=470,driver<471 brand=vpc,driver>=470,driver<471 brand=vcs,driver>=470,driver<471 brand=vws,driver>=470,driver<471 brand=cloudgaming,driver>=470,driver<471 brand=unknown,driver>=535,driver<536 brand=grid,driver>=535,driver<536 brand=tesla,driver>=535,driver<536 brand=nvidia,driver>=535,driver<536 brand=quadro,driver>=535,driver<536 brand=quadrortx,driver>=535,driver<536 brand=nvidiartx,driver>=535,driver<536 brand=vapps,driver>=535,driver<536 brand=vpc,driver>=535,driver<536 brand=vcs,driver>=535,driver<536 brand=vws,driver>=535,driver<536 brand=cloudgaming,driver>=535,driver<536 brand=unknown,driver>=550,driver<551 brand=grid,driver>=550,driver<551 brand=tesla,driver>=550,driver<551 brand=nvidia,driver>=550,driver<551 brand=quadro,driver>=550,driver<551 brand=quadrortx,driver>=550,driver<551 brand=nvidiartx,driver>=550,driver<551 brand=vapps,driver>=550,driver<551 brand=vpc,driver>=550,driver<551 brand=vcs,driver>=550,driver<551 brand=vws,driver>=550,driver<551 brand=cloudgaming,driver>=550,driver<551 brand=unknown,driver>=560,driver<561 brand=grid,driver>=560,driver<561 brand=tesla,driver>=560,driver<561 brand=nvidia,driver>=560,driver<561 brand=quadro,driver>=560,driver<561 brand=quadrortx,driver>=560,driver<561 brand=nvidiartx,driver>=560,driver<561 brand=vapps,driver>=560,driver<561 brand=vpc,driver>=560,driver<561 brand=vcs,driver>=560,driver<561 brand=vws,driver>=560,driver<561 brand=cloudgaming,driver>=560,driver<561 brand=unknown,driver>=565,driver<566 brand=grid,driver>=565,driver<566 brand=tesla,driver>=565,driver<566 brand=nvidia,driver>=565,driver<566 brand=quadro,driver>=565,driver<566 brand=quadrortx,driver>=565,driver<566 brand=nvidiartx,driver>=565,driver<566 brand=vapps,driver>=565,driver<566 brand=vpc,driver>=565,driver<566 brand=vcs,driver>=565,driver<566 brand=vws,driver>=565,driver<566 brand=cloudgaming,driver>=565,driver<566",
+                "NV_CUDA_CUDART_VERSION=12.8.90-1",
+                "CUDA_VERSION=12.8.1",
+                "LD_LIBRARY_PATH=/usr/local/cuda/lib64",
+                "NVIDIA_VISIBLE_DEVICES=all",
+                "NVIDIA_DRIVER_CAPABILITIES=compute,utility",
+                "NV_CUDA_LIB_VERSION=12.8.1-1",
+                "NV_NVTX_VERSION=12.8.90-1",
+                "NV_LIBNPP_VERSION=12.3.3.100-1",
+                "NV_LIBNPP_PACKAGE=libnpp-12-8=12.3.3.100-1",
+                "NV_LIBCUSPARSE_VERSION=12.5.8.93-1",
+                "NV_LIBCUBLAS_PACKAGE_NAME=libcublas-12-8",
+                "NV_LIBCUBLAS_VERSION=12.8.4.1-1",
+                "NV_LIBCUBLAS_PACKAGE=libcublas-12-8=12.8.4.1-1",
+                "NV_LIBNCCL_PACKAGE_NAME=libnccl2",
+                "NV_LIBNCCL_PACKAGE_VERSION=2.25.1-1",
+                "NCCL_VERSION=2.25.1-1",
+                "NV_LIBNCCL_PACKAGE=libnccl2=2.25.1-1+cuda12.8",
+                "NVIDIA_PRODUCT_NAME=CUDA",
+                "LLAMA_ARG_HOST=0.0.0.0",
+                "LLAMA_ARG_PORT=8080"
+            ],
+            "Cmd": [
+                "-m",
+                "/models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8080",
+                "--ctx-size",
+                "200000",
+                "--n-predict",
+                "-1",
+                "--n-gpu-layers",
+                "auto",
+                "--cpu-moe",
+                "--moe-cache-mib",
+                "1024",
+                "--flash-attn",
+                "on",
+                "--parallel",
+                "1",
+                "--jinja",
+                "--spec-type",
+                "draft-mtp",
+                "--spec-draft-n-max",
+                "2",
+                "--spec-draft-cpu-moe"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD",
+                    "curl",
+                    "-f",
+                    "http://localhost:8080/health"
+                ]
+            },
+            "Image": "ghcr.io/ggml-org/llama.cpp:server-cuda",
+            "Volumes": null,
+            "WorkingDir": "/app",
+            "Entrypoint": [
+                "/app/llama-server"
+            ],
+            "Labels": {
+                "maintainer": "NVIDIA CORPORATION <cudatools@nvidia.com>",
+                "org.opencontainers.image.created": "2026-10-29T04:28:07Z",
+                "org.opencontainers.image.description": "LLM inference in C/C++",
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.revision": "7ac5727d6037ec99c31a28c6520f45de154199d9",
+                "org.opencontainers.image.source": "https://github.com/ggml-org/llama.cpp",
+                "org.opencontainers.image.title": "llama.cpp",
+                "org.opencontainers.image.url": "https://github.com/ggml-org/llama.cpp",
+                "org.opencontainers.image.version": "b11977"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "",
+            "SandboxKey": "",
+            "Ports": {},
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "a0ada706e215fdd693d5f045edf3d1df94a5040f228f15f161e199f4ec28dfa3",
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "MacAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": null
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:d854233e9f043046f363953047ff518a9792b044cea1d53f86d299e88344cd5f",
+            "size": 3273,
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            }
+        }
+    }
+]
