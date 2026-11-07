@@ -1,4 +1,7 @@
-# PLAN_FOR_AGENT.md — Piano operativo dettagliato per l'agente esecutore
+# METHODOLOGY — Piano operativo dettagliato
+
+> Documento originale: `PLAN_FOR_AGENT.md`. È il piano che l'agente esecutore ha seguito,
+> conservato integralmente come specifica del metodo.
 
 > Destinatario: un agente AI che esegue i test e scrive la documentazione.
 > Seguilo **in ordine**. Non saltare passi. Non inventare risultati: ogni numero scritto nei documenti

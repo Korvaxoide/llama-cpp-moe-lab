@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "Se usi questi dati o questo metodo, cita il repository."
+title: "llama-cpp-moe-lab: tuning of llama.cpp for a 35B MoE on a 10 GB GPU"
+abstract: >-
+  Benchmark riproducibili di llama.cpp per Qwen3.6-35B-A3B (MoE ibrido) su una
+  RTX 3080 da 10 GB e Ryzen 7 3700X, con contesto di 200 000 token. Una variabile
+  per esperimento, ogni numero riconducibile a results/*.jsonl o logs/.
+type: software
+authors:
+  - family-names: Renzetti
+    given-names: Luca
+    alias: Korvaxoide
+    website: "https://github.com/Korvaxoide"
+repository-code: "https://github.com/Korvaxoide/llama-cpp-moe-lab"
+url: "https://github.com/Korvaxoide/llama-cpp-moe-lab"
+license: MIT
+version: 1.0.0
+date-released: "2026-11-07"
+keywords:
+  - llama.cpp
+  - llm
+  - moe
+  - cuda
+  - benchmarking
+  - rtx3080
+  - qwen

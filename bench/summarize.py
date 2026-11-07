@@ -52,6 +52,6 @@ full = summarize(all_tags)
 if full:
     path = os.path.join(LAB, "results", "summary.csv")
     with open(path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(full[0].keys()))
+        w = csv.DictWriter(f, fieldnames=list(full[0].keys()), lineterminator="\n")
         w.writeheader()
         w.writerows(full)

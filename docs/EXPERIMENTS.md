@@ -1,6 +1,6 @@
 # EXPERIMENTS.md — registro cronologico degli esperimenti
 
-Ogni voce segue il modello della §9 di `PLAN_FOR_AGENT.md`. Decisioni secondo la regola §3.5.
+Ogni voce segue il modello della §9 di `METHODOLOGY.md`. Decisioni secondo la regola §3.5.
 
 ## E00b_baseline — 2026-11-05
 
